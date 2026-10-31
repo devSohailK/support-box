@@ -1,0 +1,4 @@
+# Keep LF everywhere: scripts and configs run on Linux (EC2, Docker, CI).
+* text=auto eol=lf
+*.png binary
+*.woff2 binary
