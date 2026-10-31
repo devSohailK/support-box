@@ -1,0 +1,7 @@
+{
+  "messageId": "<sample-07-export-csv@mail.example.com>",
+  "from": "nina.okafor@example.org",
+  "fromName": "Nina Okafor",
+  "subject": "CSV export missing columns",
+  "body": "Hi,\n\nWhen I export my reports to CSV, the 'Region' and 'Owner' columns are empty, even though they show in the app. Is this a bug or a setting I'm missing? Not urgent, I can copy them manually for now.\n\nNina"
+}

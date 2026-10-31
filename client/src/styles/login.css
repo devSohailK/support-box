@@ -1,0 +1,129 @@
+.login {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+  min-height: 100vh;
+}
+
+.login-story {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-7);
+  padding: var(--s-6) var(--s-7);
+  background: var(--primary-soft);
+}
+
+.story {
+  max-width: 460px;
+  margin: auto 0;
+  display: grid;
+  gap: var(--s-5);
+}
+
+.story-line {
+  font-size: var(--text-2xl);
+  font-weight: 800;
+  line-height: 1.2;
+  letter-spacing: -0.015em;
+  color: var(--ink);
+  text-wrap: balance;
+}
+
+.story-flow {
+  display: grid;
+  gap: var(--s-3);
+}
+
+.story-note {
+  color: var(--ink-soft);
+  font-weight: 600;
+}
+
+/* Conversation bubbles: shared by the login story and the ticket page */
+.bubble {
+  display: grid;
+  gap: 4px;
+  max-width: 400px;
+  padding: var(--s-3) var(--s-4);
+  border-radius: var(--r-lg);
+  font-size: var(--text-sm);
+  line-height: 1.5;
+}
+
+.bubble-who {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: var(--text-xs);
+  font-weight: 800;
+}
+
+.bubble-customer {
+  background: var(--surface);
+  color: var(--ink);
+  border-bottom-left-radius: 6px;
+}
+
+.bubble-ai {
+  margin-left: var(--s-6);
+  background: var(--ai-soft);
+  color: var(--ink);
+  border: 1px dashed var(--ai-line);
+  border-bottom-right-radius: 6px;
+}
+
+.bubble-ai .bubble-who {
+  color: var(--ai);
+}
+
+.bubble-sent {
+  margin-left: var(--s-6);
+  background: var(--primary);
+  color: var(--on-primary);
+  border-bottom-right-radius: 6px;
+}
+
+.login-form-wrap {
+  display: grid;
+  place-items: center;
+  padding: var(--s-6) var(--s-4);
+  background: var(--surface);
+}
+
+.login-form {
+  width: 100%;
+  max-width: 360px;
+  display: grid;
+  gap: var(--s-4);
+}
+
+.login-form h1 {
+  margin-bottom: -8px;
+}
+
+.login-form .btn {
+  margin-top: var(--s-2);
+}
+
+@media (max-width: 860px) {
+  .login {
+    grid-template-columns: 1fr;
+  }
+
+  .login-story {
+    padding: var(--s-5) var(--s-4);
+    gap: var(--s-4);
+  }
+
+  .story-flow,
+  .story-note {
+    display: none;
+  }
+
+  .story-line {
+    font-size: var(--text-xl);
+  }
+
+  .login-form-wrap {
+    place-items: start center;
+  }
+}

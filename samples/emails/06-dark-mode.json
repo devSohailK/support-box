@@ -1,0 +1,7 @@
+{
+  "messageId": "<sample-06-dark-mode@mail.example.com>",
+  "from": "leo.martin@example.com",
+  "fromName": "Leo Martin",
+  "subject": "Feature idea: dark mode",
+  "body": "Hey,\n\nLove the product. Any chance of a dark mode? I use it late at night and the white background is rough on the eyes. No rush, just an idea.\n\nCheers,\nLeo"
+}

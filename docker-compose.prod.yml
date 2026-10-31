@@ -1,0 +1,10 @@
+# Production override: run the images built by GitHub Actions instead of building on the server.
+#   IMAGE_TAG=<git sha> docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d --no-build
+services:
+  app:
+    image: ${IMAGE_PREFIX:-ghcr.io/devsohailk/support-box}-app:${IMAGE_TAG:-latest}
+    pull_policy: always
+
+  web:
+    image: ${IMAGE_PREFIX:-ghcr.io/devsohailk/support-box}-web:${IMAGE_TAG:-latest}
+    pull_policy: always

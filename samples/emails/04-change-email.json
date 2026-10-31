@@ -1,0 +1,7 @@
+{
+  "messageId": "<sample-04-change-email@mail.example.com>",
+  "from": "maria.gonzalez@example.net",
+  "fromName": "María González",
+  "subject": "How do I change the email on my account?",
+  "body": "Hi there,\n\nI'm moving to a new job and want to change the login email on my account from this address to my personal one. I couldn't find the option in settings. How can I do it?\n\nGracias,\nMaría"
+}

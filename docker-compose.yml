@@ -1,0 +1,59 @@
+services:
+  app:
+    build:
+      context: .
+      target: server
+    env_file:
+      - path: .env
+        required: false
+    environment:
+      DATABASE_PATH: /data/app.db
+    volumes:
+      - app-data:/data
+    depends_on:
+      - mailpit
+    restart: unless-stopped
+
+  web:
+    build:
+      context: .
+      target: web
+    environment:
+      SITE_ADDRESS: ${SITE_ADDRESS:-:80}
+    ports:
+      - "${HTTP_PORT:-80}:80"
+      - "443:443"
+    volumes:
+      - caddy-data:/data
+    depends_on:
+      - app
+    restart: unless-stopped
+
+  # Demo mail catcher: SMTP on 1025, inbox UI on localhost only (SSH tunnel on the server).
+  mailpit:
+    image: axllent/mailpit:v1.27
+    ports:
+      - "127.0.0.1:8025:8025"
+    restart: unless-stopped
+
+  # --- Test tunnel (opt-in): docker compose --profile tunnel up -d ---
+  # Exposes ONLY /api/webhook/* through a Cloudflare quick tunnel so Google Apps Script can reach
+  # a local run. The public URL is printed in: docker compose logs tunnel
+  webhook-gateway:
+    profiles: [tunnel]
+    image: caddy:2-alpine
+    volumes:
+      - ./integrations/gmail/tunnel.Caddyfile:/etc/caddy/Caddyfile:ro
+    depends_on:
+      - app
+
+  tunnel:
+    profiles: [tunnel]
+    image: cloudflare/cloudflared:2025.10.0
+    command: tunnel --no-autoupdate --url http://webhook-gateway:8080
+    depends_on:
+      - webhook-gateway
+
+volumes:
+  app-data:
+  caddy-data:

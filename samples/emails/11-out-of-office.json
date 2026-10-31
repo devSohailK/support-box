@@ -1,0 +1,8 @@
+{
+  "messageId": "<sample-11-out-of-office@mail.example.com>",
+  "from": "j.wilson@example.co.uk",
+  "fromName": "James Wilson",
+  "subject": "Automatic reply: Your ticket update",
+  "body": "I am out of the office until Monday 3 November with limited access to email. For urgent matters please contact my colleague.",
+  "headers": { "autoSubmitted": "auto-replied" }
+}

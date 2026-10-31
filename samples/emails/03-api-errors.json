@@ -1,0 +1,7 @@
+{
+  "messageId": "<sample-03-api-errors@mail.example.com>",
+  "from": "devops@acme-logistics.example.com",
+  "fromName": "Acme Logistics DevOps",
+  "subject": "API returning 500 errors since 09:00 UTC",
+  "body": "Hi team,\n\nSince about 09:00 UTC every call to /v2/shipments returns HTTP 500. Our warehouse integration is down and orders are piling up. Request id from the last failure: req_7f3a91. Nothing changed on our side.\n\nCan you look into this urgently?\n\nAcme DevOps"
+}

@@ -1,0 +1,7 @@
+{
+  "messageId": "<sample-05-invoice-copy@mail.example.com>",
+  "from": "accounts@brightdental.example.com",
+  "fromName": "Bright Dental Accounts",
+  "subject": "Invoice copies for Q3 with VAT number",
+  "body": "Good morning,\n\nCould you send us copies of our July, August and September invoices? Our accountant needs them to show our VAT number (GB123456789), which we added last week.\n\nKind regards,\nAccounts team"
+}

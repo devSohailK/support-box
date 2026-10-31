@@ -1,0 +1,7 @@
+{
+  "messageId": "<sample-08-partnership@mail.example.com>",
+  "from": "hello@growthagency.example.com",
+  "fromName": "Sam at Growth Agency",
+  "subject": "Partnership opportunity",
+  "body": "Hi,\n\nWe're an agency working with 40+ SaaS companies and would love to explore a referral partnership. Who would be the best person to talk to?\n\nBest,\nSam"
+}

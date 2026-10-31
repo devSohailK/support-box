@@ -1,0 +1,7 @@
+{
+  "messageId": "<sample-02-locked-out@mail.example.com>",
+  "from": "tom.becker@example.org",
+  "fromName": "Tom Becker",
+  "subject": "URGENT: locked out of my account before a client demo",
+  "body": "Hello,\n\nI can't log in. The password reset email never arrives (checked spam). I have a client demo in two hours and all my files are in the app. Please help ASAP.\n\nTom"
+}

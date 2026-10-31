@@ -1,0 +1,7 @@
+{
+  "messageId": "<sample-12-bounce@mx.example.com>",
+  "from": "mailer-daemon@mx.example.com",
+  "fromName": "Mail Delivery Subsystem",
+  "subject": "Delivery Status Notification (Failure)",
+  "body": "Delivery to the following recipient failed permanently:\n\n    old-address@example.com\n\nThe email account that you tried to reach does not exist."
+}

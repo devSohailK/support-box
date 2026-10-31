@@ -1,0 +1,10 @@
+# Gateway for the temporary test tunnel: only the webhook is reachable from the internet.
+# The app UI and login stay local-only.
+:8080 {
+	handle /api/webhook/* {
+		reverse_proxy app:3000
+	}
+	handle {
+		respond "Not found" 404
+	}
+}

@@ -1,0 +1,7 @@
+{
+  "messageId": "<sample-01-double-charge@mail.example.com>",
+  "from": "priya.shah@example.com",
+  "fromName": "Priya Shah",
+  "subject": "Charged twice for my October subscription",
+  "body": "Hi,\n\nI just checked my bank statement and I was charged twice for the Pro plan this month (2 x $49 on 3 October). I only have one account. Can you refund the extra charge as soon as possible? Money is tight this month.\n\nThanks,\nPriya"
+}
