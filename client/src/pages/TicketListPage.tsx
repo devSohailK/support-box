@@ -1,11 +1,12 @@
-import { ChevronLeft, ChevronRight, Inbox, PartyPopper, Plus, RefreshCw } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { ChevronLeft, ChevronRight, Coffee, Inbox, Plus, RefreshCw } from 'lucide-react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { Link, useSearchParams } from 'react-router';
 import type { TicketPage, TicketStatus } from '@support-box/shared';
 import { api } from '../api';
 import { Avatar } from '../ui/Avatar';
 import { CategoryTag, OverduePill, STATUS_LABELS, StatusPill, UrgencyPill } from '../ui/Badges';
 import { useCounts } from '../ui/counts';
+import { enterRows, wobble } from '../ui/motion';
 import { RelativeTime } from '../ui/time';
 
 const REFRESH_MS = 10_000;
@@ -32,6 +33,10 @@ export function TicketListPage() {
   const [error, setError] = useState<string | null>(null);
   const [tick, setTick] = useState(0);
   const { counts } = useCounts();
+  const pageRef = useRef<HTMLDivElement>(null);
+  // Which query the shown data belongs to, and the ticket ids already on screen for it.
+  const dataQuery = useRef('');
+  const seen = useRef<{ query: string; ids: Set<number> } | null>(null);
 
   // Near-live updates: re-fetch every 10s while the tab is visible, and as soon as it becomes visible.
   useEffect(() => {
@@ -52,6 +57,7 @@ export function TicketListPage() {
     api<TicketPage>(`/tickets?${query}`)
       .then((d) => {
         if (!cancelled) {
+          dataQuery.current = query;
           setData(d);
           setError(null);
         }
@@ -61,6 +67,22 @@ export function TicketListPage() {
       cancelled = true;
     };
   }, [query, tick]);
+
+  // Animate only tickets that weren't on screen before in this same view. The first load of a view
+  // (and every 10s refresh that brings nothing new) renders without motion.
+  useLayoutEffect(() => {
+    if (!data) return;
+    const ids = data.items.map((t) => t.id);
+    const prev = seen.current;
+    seen.current = { query: dataQuery.current, ids: new Set(ids) };
+    if (!prev || prev.query !== dataQuery.current) return;
+
+    const root = pageRef.current;
+    const fresh = ids.filter((id) => !prev.ids.has(id));
+    enterRows(fresh.flatMap((id) => root?.querySelector(`[data-ticket-id="${id}"]`) ?? []));
+    // The view just went from something to nothing: a small celebration.
+    if (prev.ids.size > 0 && ids.length === 0) wobble(root?.querySelector('.empty:not(.is-filtered) .empty-icon') ?? null);
+  }, [data]);
 
   function update(changes: Record<string, string | null>) {
     const next = new URLSearchParams(params);
@@ -75,7 +97,7 @@ export function TicketListPage() {
   const { title, sub } = viewTitle(params);
 
   return (
-    <div className="page">
+    <div className="page" ref={pageRef}>
       <header className="page-head">
         <div>
           <h1>{title}</h1>
@@ -128,9 +150,9 @@ export function TicketListPage() {
         <>
           <ul className="ticket-list" aria-label={title}>
             {data.items.map((t) => (
-              <li key={t.id}>
+              <li key={t.id} data-ticket-id={t.id}>
                 <Link to={`/tickets/${t.id}`} className={`ticket-row${t.overdue ? ' is-overdue' : ''}`}>
-                  <Avatar name={t.fromName || t.fromEmail} seed={t.fromEmail} size={40} />
+                  <Avatar name={t.fromName || t.fromEmail} seed={t.fromEmail} size={32} />
                   <div className="ticket-main">
                     <div className="ticket-subject">{t.subject}</div>
                     <div className="ticket-from">
@@ -153,7 +175,7 @@ export function TicketListPage() {
                   </div>
                   <div className="ticket-meta">
                     <span className="ticket-assignee" title={`Assigned to ${t.assignee.name}`}>
-                      <Avatar name={t.assignee.name} size={24} />
+                      <Avatar name={t.assignee.name} size={22} />
                       <span className="visually-hidden">Assigned to {t.assignee.name}</span>
                     </span>
                     <span className="ticket-time">
@@ -196,13 +218,13 @@ export function TicketListPage() {
 
 function ListSkeleton() {
   return (
-    <ul className="ticket-list" aria-busy="true" aria-label="Loading tickets">
+    <ul className="ticket-list" aria-busy="true" aria-label="Fetching the latest tickets...">
       {Array.from({ length: 5 }, (_, i) => (
         <li key={i} className="ticket-row is-skeleton">
-          <span className="skeleton" style={{ width: 40, height: 40, borderRadius: '50%' }} />
+          <span className="skeleton" style={{ width: 32, height: 32, borderRadius: '50%' }} />
           <div className="ticket-main">
-            <span className="skeleton" style={{ width: '60%', height: 16 }} />
-            <span className="skeleton" style={{ width: '30%', height: 12, marginTop: 8 }} />
+            <span className="skeleton" style={{ width: '60%', height: 14 }} />
+            <span className="skeleton" style={{ width: '30%', height: 10, marginTop: 6 }} />
           </div>
         </li>
       ))}
@@ -213,8 +235,10 @@ function ListSkeleton() {
 function EmptyState({ mine, filtered }: { mine: boolean; filtered: boolean }) {
   if (filtered) {
     return (
-      <div className="empty">
-        <Inbox size={32} aria-hidden="true" />
+      <div className="empty is-filtered">
+        <span className="empty-icon">
+          <Inbox size={26} aria-hidden="true" />
+        </span>
         <h2>No tickets match these filters</h2>
         <p className="muted">Choose another status, or clear the overdue filter.</p>
       </div>
@@ -222,12 +246,14 @@ function EmptyState({ mine, filtered }: { mine: boolean; filtered: boolean }) {
   }
   return (
     <div className="empty">
-      <PartyPopper size={32} aria-hidden="true" />
-      <h2>{mine ? 'You’re all caught up' : 'The inbox is empty'}</h2>
+      <span className="empty-icon">
+        <Coffee size={26} aria-hidden="true" />
+      </span>
+      <h2>All caught up. Nothing waiting.</h2>
       <p className="muted">
         {mine
-          ? 'New tickets are assigned automatically and show up here.'
-          : 'Emails to the support address appear here within a minute.'}
+          ? 'Time for a coffee. New tickets are assigned automatically and land here.'
+          : 'Enjoy the quiet. Emails to the support address show up here within a minute.'}
       </p>
       <Link to="/tickets/new" className="btn btn-secondary">
         <Plus size={18} aria-hidden="true" />

@@ -77,13 +77,13 @@ a:hover {
   font-size: var(--text-xs);
 }
 
-/* Buttons: 44px targets */
+/* Buttons: compact 40px, 44px on touch screens */
 .btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: var(--s-2);
-  min-height: 44px;
+  min-height: 40px;
   padding: 0 var(--s-4);
   border: 1px solid transparent;
   border-radius: var(--r-sm);
@@ -94,8 +94,22 @@ a:hover {
   transition:
     background-color var(--fast) var(--ease),
     border-color var(--fast) var(--ease),
-    color var(--fast) var(--ease);
+    color var(--fast) var(--ease),
+    box-shadow var(--fast) var(--ease),
+    transform var(--fast) var(--ease);
   white-space: nowrap;
+}
+
+.btn:active:not(:disabled) {
+  transform: translateY(1px);
+}
+
+@media (pointer: coarse) {
+  .btn,
+  .input,
+  .select {
+    min-height: 44px;
+  }
 }
 
 .btn:disabled {
@@ -172,8 +186,8 @@ a:hover {
 .select,
 .textarea {
   width: 100%;
-  min-height: 44px;
-  padding: 10px 14px;
+  min-height: 40px;
+  padding: 8px 12px;
   font: inherit;
   color: var(--ink);
   background: var(--surface);
@@ -204,7 +218,7 @@ a:hover {
 .select {
   appearance: none;
   padding-right: 40px;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='none' stroke='%236b7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m4 6 4 4 4-4'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='none' stroke='%2367625a' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m4 6 4 4 4-4'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: right 12px center;
   cursor: pointer;

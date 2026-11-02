@@ -35,7 +35,9 @@
 
 .boot {
   display: grid;
-  place-items: center;
+  place-content: center;
+  justify-items: center;
+  gap: var(--s-3);
   min-height: 100vh;
 }
 

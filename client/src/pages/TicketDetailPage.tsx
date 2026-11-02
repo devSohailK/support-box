@@ -10,7 +10,7 @@ import {
   Send,
   Sparkles,
 } from 'lucide-react';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router';
 import { MAX_REPLY_CHARS, type AssignableUser, type TicketDetail } from '@support-box/shared';
 import { api, ApiError } from '../api';
@@ -19,6 +19,7 @@ import { Avatar } from '../ui/Avatar';
 import { CATEGORY_LABELS, OverduePill, StatusPill, UrgencyPill } from '../ui/Badges';
 import { ConfirmDialog } from '../ui/ConfirmDialog';
 import { useCounts } from '../ui/counts';
+import { wobble } from '../ui/motion';
 import { formatDate, RelativeTime } from '../ui/time';
 import { useToast } from '../ui/Toast';
 
@@ -121,6 +122,16 @@ function TicketView({ id }: { id: string }) {
     [id, refreshCounts],
   );
 
+  // Celebrate a reply going out (not a reply that was already there when the page opened).
+  const threadRef = useRef<HTMLElement>(null);
+  const hadReply = useRef<boolean | null>(null);
+  useLayoutEffect(() => {
+    if (!ticket) return;
+    const hasReply = Boolean(ticket.reply && ticket.reply.deliveryStatus !== 'failed');
+    if (hadReply.current === false && hasReply) wobble(threadRef.current?.querySelector('.message-sent') ?? null);
+    hadReply.current = hasReply;
+  }, [ticket]);
+
   if (loadError) {
     return (
       <div className="page-narrow">
@@ -142,7 +153,7 @@ function TicketView({ id }: { id: string }) {
   async function close() {
     const t = await act(`/tickets/${ticket!.id}/close`);
     setConfirmClose(false);
-    if (t) toast('Ticket closed');
+    if (t) toast('Ticket closed. One less on the pile.');
   }
 
   return (
@@ -162,7 +173,7 @@ function TicketView({ id }: { id: string }) {
       </header>
 
       <div className="detail-grid">
-        <section className="thread" aria-label="Conversation">
+        <section className="thread" aria-label="Conversation" ref={threadRef}>
           <article className="message message-customer">
             <header className="message-head">
               <Avatar name={ticket.fromName || ticket.fromEmail} seed={ticket.fromEmail} size={40} />
@@ -304,7 +315,7 @@ function AiStatus({ ticket, busy, act }: { ticket: TicketDetail; busy: boolean; 
       <div className="ai-working" aria-live="polite">
         <span className="spinner" aria-hidden="true" />
         <div>
-          <strong>Drafting a reply</strong>
+          <strong>Drafting a reply...</strong>
           <div className="small muted">The AI is reading the email. This usually takes a few seconds.</div>
         </div>
       </div>
@@ -323,7 +334,7 @@ function AiStatus({ ticket, busy, act }: { ticket: TicketDetail; busy: boolean; 
                 className="btn btn-secondary btn-sm"
                 disabled={busy || ticket.aiRetriesLeft === 0}
                 onClick={async () => {
-                  if (await act(`/tickets/${ticket.id}/retry-ai`)) toast('Drafting the reply again');
+                  if (await act(`/tickets/${ticket.id}/retry-ai`)) toast('Giving the AI another go...');
                 }}
               >
                 <RotateCcw size={16} aria-hidden="true" />
@@ -373,7 +384,7 @@ function Composer({ ticket, busy, act }: { ticket: TicketDetail; busy: boolean; 
   async function save() {
     if (await act(`/tickets/${ticket.id}/draft`, { draft: text }, 'PUT')) {
       setSavedText(text);
-      toast('Draft saved');
+      toast('Draft saved. It’ll be right here.');
     }
   }
 

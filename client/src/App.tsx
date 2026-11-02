@@ -15,7 +15,7 @@ function Routed() {
     return (
       <div className="boot" aria-busy="true">
         <span className="spinner" aria-hidden="true" />
-        <span className="visually-hidden">Loading</span>
+        <span className="muted small">Opening the inbox...</span>
       </div>
     );
   }

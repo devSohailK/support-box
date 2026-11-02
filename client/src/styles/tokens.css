@@ -1,111 +1,118 @@
 /*
- * Design tokens: "Calm desk". See docs/DESIGN.md.
+ * Design tokens: "Warm desk". See docs/DESIGN.md.
  * Components use these variables only; never raw hex values.
  */
 :root {
   color-scheme: light;
 
-  /* Neutrals */
-  --bg: #f5f7fa;
-  --surface: #ffffff;
-  --surface-sunken: #eef2f6;
-  --ink: #1f2937;
-  --ink-soft: #4b5563;
-  --ink-faint: #6b7280; /* 4.8:1 on white: lowest allowed for text */
-  --line: #e3e8ef;
-  --line-strong: #cfd7e2;
+  /* Neutrals: warm cream paper */
+  --bg: #eeebe4;
+  --surface: #fbfaf7;
+  --surface-sunken: #e6e2d9;
+  --ink: #23211c;
+  --ink-soft: #4a463e;
+  --ink-faint: #67625a; /* 5.0:1 on --bg: lowest allowed for text */
+  --line: #e0dbd0;
+  --line-strong: #cbc4b5;
+  --row-hover: #f4f1ea;
 
-  /* Brand: harbor teal for actions */
-  --primary: #0f766e;
-  --primary-hover: #0b5f59;
-  --primary-soft: #e3f4f2;
+  /* The one bold accent: cobalt, for actions and sent replies */
+  --primary: #2e47d6;
+  --primary-hover: #2237b4;
+  --primary-soft: #e4e8fb;
   --on-primary: #ffffff;
 
-  /* AI: violet, used only for machine-produced content */
-  --ai: #6d4fd8;
-  --ai-soft: #f3f0fd;
-  --ai-line: #ddd5fa;
+  /* AI: muted plum, used only for machine-produced content */
+  --ai: #7d3f98;
+  --ai-soft: #f5eef6;
+  --ai-line: #e4d3ea;
 
   /* Urgency and states */
-  --urgent: #c2410c;
-  --urgent-soft: #fdeee6;
-  --normal: #a16207;
-  --normal-soft: #fdf6e3;
-  --low: #475569;
-  --low-soft: #eef2f6;
+  --urgent: #b8410f;
+  --urgent-soft: #f9e6db;
+  --normal: #8f5a06;
+  --normal-soft: #f6ecd4;
+  --low: #57534b;
+  --low-soft: #e9e5dc;
   --danger: #b42318;
-  --danger-soft: #fdecea;
-  --success: #15803d;
-  --success-soft: #e7f6ec;
+  --danger-soft: #f9e3df;
+  --success: #2f7a3e;
+  --success-soft: #e2f0e2;
 
-  /* Type */
+  /* Type: friendly but compact */
   --font: 'Nunito Sans Variable', 'Nunito Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
-  --text-xs: 0.8125rem; /* 13px: metadata only */
-  --text-sm: 0.875rem;
-  --text-md: 1rem;
-  --text-lg: 1.125rem;
-  --text-xl: 1.375rem;
-  --text-2xl: 1.75rem;
-  --leading: 1.55;
+  --text-xs: 0.75rem; /* 12px: metadata only */
+  --text-sm: 0.8125rem;
+  --text-md: 0.9375rem;
+  --text-lg: 1.0625rem;
+  --text-xl: 1.25rem;
+  --text-2xl: 1.5rem;
+  --leading: 1.5;
 
-  /* Space (airy scale) */
+  /* Space (compact scale) */
   --s-1: 4px;
   --s-2: 8px;
   --s-3: 12px;
   --s-4: 16px;
-  --s-5: 24px;
-  --s-6: 32px;
-  --s-7: 48px;
+  --s-5: 20px;
+  --s-6: 28px;
+  --s-7: 40px;
 
-  /* Shape: radius follows hierarchy (controls < rows < panels) */
+  /* Shape: 8 to 12px, following hierarchy (controls < rows < panels) */
   --r-sm: 8px;
-  --r-md: 12px;
-  --r-lg: 18px;
+  --r-md: 10px;
+  --r-lg: 12px;
   --r-pill: 999px;
 
-  --shadow-pop: 0 12px 32px rgba(15, 23, 42, 0.14), 0 2px 6px rgba(15, 23, 42, 0.06);
-  --focus: 0 0 0 3px rgba(15, 118, 110, 0.35);
+  --shadow-pop: 0 12px 32px rgba(48, 40, 24, 0.16), 0 2px 6px rgba(48, 40, 24, 0.08);
+  --shadow-soft: 0 1px 2px rgba(48, 40, 24, 0.06);
+  --focus: 0 0 0 3px rgba(46, 71, 214, 0.35);
+  --backdrop: rgba(35, 33, 28, 0.42);
 
+  /* Motion: hover and focus stay in the 120 to 180ms band */
   --ease: cubic-bezier(0.2, 0.8, 0.2, 1);
-  --fast: 150ms;
-  --medium: 220ms;
+  --fast: 140ms;
+  --medium: 180ms;
 
-  --sidebar-w: 248px;
+  --sidebar-w: 232px;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
     color-scheme: dark;
-    --bg: #0f1419;
-    --surface: #171d24;
-    --surface-sunken: #1d242c;
-    --ink: #e6ebf1;
-    --ink-soft: #b4bec9;
-    --ink-faint: #8d98a5;
-    --line: #27303a;
-    --line-strong: #36414d;
+    --bg: #1a1814;
+    --surface: #23201b;
+    --surface-sunken: #2b2721;
+    --ink: #efebe2;
+    --ink-soft: #c9c2b4;
+    --ink-faint: #a29a8b;
+    --line: #34302a;
+    --line-strong: #474137;
+    --row-hover: #2a2620;
 
-    --primary: #2bb3a6;
-    --primary-hover: #4cc6ba;
-    --primary-soft: #12302d;
-    --on-primary: #06201d;
+    --primary: #8597ff;
+    --primary-hover: #a3b1ff;
+    --primary-soft: #252b4a;
+    --on-primary: #10163a;
 
-    --ai: #a996f5;
-    --ai-soft: #1f1a33;
-    --ai-line: #3a3163;
+    --ai: #d29be6;
+    --ai-soft: #2d2232;
+    --ai-line: #4b3655;
 
     --urgent: #f59a6b;
     --urgent-soft: #3a2116;
     --normal: #e3b341;
     --normal-soft: #33290f;
-    --low: #a3b1c2;
-    --low-soft: #222a33;
+    --low: #b9b1a3;
+    --low-soft: #2b2721;
     --danger: #f28b82;
     --danger-soft: #3a1d1b;
-    --success: #6fcf8f;
-    --success-soft: #16301f;
+    --success: #7ccf8c;
+    --success-soft: #1b2e1e;
 
     --shadow-pop: 0 12px 32px rgba(0, 0, 0, 0.5);
-    --focus: 0 0 0 3px rgba(43, 179, 166, 0.45);
+    --shadow-soft: 0 1px 2px rgba(0, 0, 0, 0.3);
+    --focus: 0 0 0 3px rgba(133, 151, 255, 0.45);
+    --backdrop: rgba(0, 0, 0, 0.55);
   }
 }
