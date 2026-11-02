@@ -1,26 +1,24 @@
-/* Status tabs: a segmented control; .tab-indicator slides under the active tab (GSAP) */
+/* Status tabs: an M3 segmented button; .tab-indicator (secondary-container) slides under the
+   selected segment (GSAP) */
 .tabs {
   position: relative;
   display: inline-flex;
   flex-wrap: wrap;
-  gap: 2px;
   max-width: 100%;
-  padding: 3px;
-  margin-bottom: var(--s-3);
-  border-radius: var(--r-md);
-  background: var(--surface-sunken);
+  margin-bottom: var(--s-4);
+  border: 1px solid var(--md-outline);
+  border-radius: var(--md-shape-full);
+  overflow: hidden;
 }
 
 .tab-indicator {
   position: absolute;
-  top: 3px;
+  top: 0;
   left: 0;
-  height: calc(var(--control) - 6px);
+  height: 100%;
   width: 0;
   opacity: 0;
-  border-radius: var(--r-sm);
-  background: var(--surface);
-  box-shadow: var(--shadow-soft), 0 0 0 1px var(--line);
+  background: var(--md-secondary-container);
   pointer-events: none;
 }
 
@@ -29,56 +27,62 @@
   display: inline-flex;
   align-items: center;
   gap: var(--s-2);
-  min-height: calc(var(--control) - 6px);
-  padding: 0 var(--s-3);
+  min-height: calc(var(--control) - 2px);
+  padding: 0 var(--s-4);
   border: 0;
-  border-radius: var(--r-sm);
   background: transparent;
-  color: var(--ink-soft);
-  font: inherit;
-  font-size: var(--text-sm);
-  font-weight: var(--w-medium);
+  color: var(--md-on-surface);
+  font: var(--md-label-large);
   cursor: pointer;
   transition: color var(--fast) var(--ease);
 }
 
-.tab:hover {
-  color: var(--ink);
+.tab + .tab {
+  box-shadow: inset 1px 0 0 var(--md-outline);
 }
 
 .tab.is-active {
-  color: var(--ink);
+  color: var(--md-on-secondary-container);
+}
+
+/* The segmented container clips, so the focus ring sits inside the segment */
+.tab:focus-visible {
+  outline-offset: -3px;
 }
 
 .tab-count {
   min-width: 18px;
   padding: 0 5px;
-  border-radius: var(--r-pill);
-  background: var(--line);
-  color: var(--ink-soft);
-  font-size: var(--text-xs);
+  border-radius: var(--md-shape-full);
+  background: var(--md-surface-container-highest);
+  color: var(--md-on-surface-variant);
+  font: var(--md-label-small);
   line-height: 18px;
   text-align: center;
 }
 
-.list-alert {
-  margin-bottom: var(--s-3);
+.tab.is-active .tab-count {
+  background: var(--md-surface-container-lowest);
 }
 
-/* Ticket list: every row shares the same fixed columns so each field sits in one place */
+.list-alert {
+  margin-bottom: var(--s-4);
+}
+
+/* Ticket list: one elevated card; every row shares the same fixed columns so each field sits
+   in one place */
 .ticket-list {
   list-style: none;
   margin: 0;
   padding: 0;
-  background: var(--surface);
-  border: 1px solid var(--line);
-  border-radius: var(--r-lg);
-  box-shadow: var(--shadow-soft);
+  background: var(--md-surface-container-lowest);
+  border-radius: var(--md-shape-lg);
+  box-shadow: var(--md-elev-1);
   overflow: hidden;
 }
 
 .ticket-list > li + li {
-  border-top: 1px solid var(--line);
+  border-top: 1px solid var(--md-outline-variant);
 }
 
 .ticket-list > li.is-leaving {
@@ -91,44 +95,25 @@
   grid-template-columns: var(--cols);
   align-items: center;
   gap: var(--s-3);
-  min-height: 52px;
+  min-height: 56px;
   padding: var(--s-2) var(--s-4);
-  color: var(--ink);
+  color: var(--md-on-surface);
   transition: background-color var(--fast) var(--ease);
-  position: relative;
 }
 
 .ticket-row:hover {
-  background: var(--surface-sunken);
   text-decoration: none;
 }
 
-/* Keyboard focus (j/k) is the cobalt "you are here" marker */
+/* Keyboard focus (j/k) is the cobalt "you are here" marker: primary-container plus the focus ring */
 .ticket-row:focus-visible {
-  border-radius: 0;
-  background: var(--primary-soft);
-  box-shadow: inset 3px 0 0 var(--primary);
+  outline-offset: -3px;
+  background: var(--md-primary-container);
 }
 
 .ticket-row.is-flash,
 .is-leaving .ticket-row {
-  background: var(--success-soft);
-}
-
-/* Overdue is shown once: this bar. */
-.ticket-row.is-overdue::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 8px;
-  bottom: 8px;
-  width: 3px;
-  border-radius: 0 3px 3px 0;
-  background: var(--urgent);
-}
-
-.ticket-row.is-overdue:focus-visible::before {
-  display: none;
+  background: var(--md-success-container);
 }
 
 .ticket-main {
@@ -137,8 +122,7 @@
 }
 
 .ticket-subject {
-  font-weight: var(--w-bold);
-  line-height: 1.35;
+  font: var(--md-title-small);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -147,9 +131,8 @@
 .ticket-from {
   display: flex;
   gap: var(--s-2);
-  font-size: var(--text-sm);
-  line-height: 1.35;
-  color: var(--ink-faint);
+  font: var(--md-body-medium);
+  color: var(--md-on-surface-muted);
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
@@ -160,8 +143,8 @@
 }
 
 .ticket-category {
-  font-size: var(--text-sm);
-  color: var(--ink-soft);
+  font: var(--md-body-medium);
+  color: var(--md-on-surface-variant);
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
@@ -172,10 +155,19 @@
 }
 
 .ticket-time {
-  font-size: var(--text-xs);
-  color: var(--ink-faint);
-  text-align: right;
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--s-1);
+  font: var(--md-body-small);
+  color: var(--md-on-surface-muted);
   white-space: nowrap;
+}
+
+/* Overdue is shown once, where it belongs: on the age */
+.ticket-row.is-overdue .ticket-time {
+  color: var(--md-error);
+  font-weight: var(--w-bold);
 }
 
 .ticket-row.is-skeleton {
@@ -192,7 +184,7 @@
   align-items: center;
   justify-content: space-between;
   gap: var(--s-3);
-  margin-top: var(--s-3);
+  margin-top: var(--s-4);
 }
 
 .pager {
@@ -202,17 +194,16 @@
   margin-left: auto;
 }
 
-/* Empty state */
+/* Empty state: a filled card, one tonal step below the list card */
 .empty {
   display: grid;
   justify-items: center;
   gap: var(--s-3);
   padding: var(--s-7) var(--s-4);
   text-align: center;
-  background: var(--surface);
-  border: 1px dashed var(--line-strong);
-  border-radius: var(--r-lg);
-  color: var(--ink-faint);
+  background: var(--md-surface-container-low);
+  border-radius: var(--md-shape-lg);
+  color: var(--md-on-surface-muted);
 }
 
 .empty h2 {
@@ -222,16 +213,16 @@
 .empty-icon {
   display: grid;
   place-items: center;
-  width: 48px;
-  height: 48px;
-  border-radius: var(--r-lg);
-  background: var(--success-soft);
-  color: var(--success);
+  width: 56px;
+  height: 56px;
+  border-radius: var(--md-shape-lg);
+  background: var(--md-success-container);
+  color: var(--md-success);
 }
 
 .empty.is-filtered .empty-icon {
-  background: var(--surface-sunken);
-  color: var(--ink-faint);
+  background: var(--md-surface-container-high);
+  color: var(--md-on-surface-muted);
 }
 
 .empty .btn {

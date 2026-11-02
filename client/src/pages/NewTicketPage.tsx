@@ -4,6 +4,7 @@ import { Link, useNavigate } from 'react-router';
 import { MAX_BODY_CHARS, type TicketDetail } from '@support-box/shared';
 import { api, ApiError } from '../api';
 import { useCounts } from '../ui/counts';
+import { TextField } from '../ui/TextField';
 import { useToast } from '../ui/Toast';
 
 export function NewTicketPage() {
@@ -12,14 +13,28 @@ export function NewTicketPage() {
   const { refresh } = useCounts();
   const [form, setForm] = useState({ fromEmail: '', fromName: '', subject: '', body: '' });
   const [error, setError] = useState<string | null>(null);
+  const [fieldErrors, setFieldErrors] = useState<Partial<Record<keyof typeof form, string>>>({});
   const [submitting, setSubmitting] = useState(false);
 
-  const set = (key: keyof typeof form) => (e: { target: { value: string } }) =>
+  const set = (key: keyof typeof form) => (e: { target: { value: string } }) => {
     setForm((f) => ({ ...f, [key]: e.target.value }));
+    setFieldErrors((fe) => ({ ...fe, [key]: undefined }));
+  };
+
+  // Field-level checks first, so each problem shows next to its field.
+  function check() {
+    const fe: typeof fieldErrors = {};
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.fromEmail.trim())) fe.fromEmail = 'Enter an address like name@company.com';
+    if (!form.subject.trim()) fe.subject = 'Add a short subject';
+    if (!form.body.trim()) fe.body = 'Describe what the customer needs';
+    setFieldErrors(fe);
+    return Object.keys(fe).length === 0;
+  }
 
   async function onSubmit(e: FormEvent) {
     e.preventDefault();
     setError(null);
+    if (!check()) return;
     setSubmitting(true);
     try {
       const ticket = await api<TicketDetail>('/tickets', {
@@ -52,35 +67,44 @@ export function NewTicketPage() {
         </div>
       </header>
 
-      <form className="form-card" onSubmit={onSubmit}>
+      <form className="form-card" onSubmit={onSubmit} noValidate>
         <div className="form-row">
-          <label className="field">
-            <span className="field-label">Customer email</span>
-            <input className="input" type="email" value={form.fromEmail} onChange={set('fromEmail')} required autoFocus />
-          </label>
-          <label className="field">
-            <span className="field-label">
-              Customer name <span className="muted">(optional)</span>
-            </span>
-            <input className="input" value={form.fromName} onChange={set('fromName')} maxLength={200} />
-          </label>
-        </div>
-        <label className="field">
-          <span className="field-label">Subject</span>
-          <input className="input" value={form.subject} onChange={set('subject')} required maxLength={200} />
-        </label>
-        <label className="field">
-          <span className="field-label">What the customer needs</span>
-          <textarea
-            className="textarea"
-            value={form.body}
-            onChange={set('body')}
+          <TextField
+            label="Customer email"
+            type="email"
+            value={form.fromEmail}
+            onChange={set('fromEmail')}
+            error={fieldErrors.fromEmail}
             required
-            rows={9}
-            maxLength={MAX_BODY_CHARS}
+            autoFocus
           />
-          <span className="field-hint">Write it in the customer’s words where you can; the AI drafts a reply from this.</span>
-        </label>
+          <TextField
+            label="Customer name"
+            value={form.fromName}
+            onChange={set('fromName')}
+            maxLength={200}
+            supporting="Optional"
+          />
+        </div>
+        <TextField
+          label="Subject"
+          value={form.subject}
+          onChange={set('subject')}
+          error={fieldErrors.subject}
+          required
+          maxLength={200}
+        />
+        <TextField
+          multiline
+          label="What the customer needs"
+          value={form.body}
+          onChange={set('body')}
+          error={fieldErrors.body}
+          required
+          rows={9}
+          maxLength={MAX_BODY_CHARS}
+          supporting="Write it in the customer’s words where you can; the AI drafts a reply from this."
+        />
 
         {error && (
           <div className="alert alert-danger" role="alert">

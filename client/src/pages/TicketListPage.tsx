@@ -1,4 +1,4 @@
-import { ChevronLeft, ChevronRight, Coffee, Inbox, Plus, RefreshCw } from 'lucide-react';
+import { Check, ChevronLeft, ChevronRight, Clock, Coffee, Inbox, Plus, RefreshCw } from 'lucide-react';
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { Link, useLocation, useNavigate, useSearchParams } from 'react-router';
 import type { TicketPage, TicketStatus } from '@support-box/shared';
@@ -195,7 +195,7 @@ export function TicketListPage() {
                 <Link
                   to={`/tickets/${t.id}`}
                   state={{ from: query }}
-                  className={`ticket-row${t.overdue ? ' is-overdue' : ''}`}
+                  className={`ticket-row state-layer${t.overdue ? ' is-overdue' : ''}`}
                 >
                   <span className="ticket-urgency">
                     <UrgencyPill urgency={t.urgency} />
@@ -205,7 +205,6 @@ export function TicketListPage() {
                     <span className="ticket-from">
                       {t.fromName || t.fromEmail}
                       <span className="ticket-id">#{t.id}</span>
-                      {t.overdue && <span className="visually-hidden">, overdue</span>}
                     </span>
                   </span>
                   <span className="ticket-category">
@@ -222,8 +221,10 @@ export function TicketListPage() {
                     <Avatar name={t.assignee.name} size={22} />
                     <span className="visually-hidden">Assigned to {t.assignee.name}</span>
                   </span>
-                  <span className="ticket-time">
+                  <span className="ticket-time" title={t.overdue ? 'Older than 24 hours with no reply' : undefined}>
+                    {t.overdue && <Clock size={13} strokeWidth={2.5} aria-hidden="true" />}
                     <RelativeTime iso={t.createdAt} />
+                    {t.overdue && <span className="visually-hidden">, overdue</span>}
                   </span>
                 </Link>
               </li>
@@ -300,10 +301,11 @@ function StatusTabs({
         return (
           <button
             key={s || 'all'}
-            className={`tab${active ? ' is-active' : ''}`}
+            className={`tab state-layer${active ? ' is-active' : ''}`}
             aria-pressed={active}
             onClick={() => onPick(s)}
           >
+            {active && <Check size={16} strokeWidth={2.5} aria-hidden="true" />}
             {s ? STATUS_LABELS[s] : 'Any status'}
             {n != null && n > 0 && (
               <span className="tab-count">

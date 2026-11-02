@@ -274,7 +274,7 @@ function TicketView({ id }: { id: string }) {
               <ul className="related">
                 {ticket.otherFromSender.map((t) => (
                   <li key={t.id}>
-                    <Link to={`/tickets/${t.id}`} className="related-link">
+                    <Link to={`/tickets/${t.id}`} className="related-link state-layer">
                       <span className="related-subject">{t.subject}</span>
                       <span className="related-meta">
                         <StatusPill status={t.status} />

@@ -323,9 +323,18 @@
     display: none;
   }
 
+  /* In the top bar the FAB and drawer items shrink to the control height */
   .sidebar-new {
     width: auto;
     order: 3;
+    align-self: center;
+    min-height: var(--control);
+    border-radius: var(--md-shape-md);
+    box-shadow: var(--md-elev-1);
+  }
+
+  .view {
+    min-height: var(--control);
   }
 
   .views {

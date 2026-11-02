@@ -67,7 +67,6 @@
   margin-left: var(--s-6);
   background: var(--ai-soft);
   color: var(--ink);
-  border: 1px dashed var(--ai-line);
   border-bottom-right-radius: var(--s-1);
 }
 
@@ -82,7 +81,6 @@
 .bubble-sent {
   margin-left: var(--s-6);
   background: var(--success-soft);
-  border: 1px solid var(--success-line);
   color: var(--ink);
   border-bottom-right-radius: var(--s-1);
 }
@@ -99,6 +97,11 @@
   max-width: 360px;
   display: grid;
   gap: var(--s-4);
+}
+
+.login-fields {
+  display: grid;
+  gap: var(--s-1);
 }
 
 .login-form h1 {

@@ -1,8 +1,9 @@
-import { AlertCircle, Inbox, Sparkles } from 'lucide-react';
+import { Inbox, Sparkles } from 'lucide-react';
 import { useEffect, useLayoutEffect, useRef, useState, type FormEvent } from 'react';
 import { ApiError } from '../api';
 import { useAuth } from '../auth';
 import { loginIntro, shake } from '../ui/motion';
+import { TextField } from '../ui/TextField';
 
 const MESSAGES: Record<string, string> = {
   invalid_credentials: 'That email and password don’t match an active account.',
@@ -77,35 +78,31 @@ export function LoginPage() {
           <h1>Sign in</h1>
           <p className="muted">Use the account your admin set up for you.</p>
 
-          <label className="field">
-            <span className="field-label">Email</span>
-            <input
-              className="input"
+          <div className="login-fields">
+            <TextField
+              label="Work email"
               type="email"
               autoComplete="username"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              required
+              error={error ? ' ' : null}
               autoFocus
             />
-          </label>
-          <label className="field">
-            <span className="field-label">Password</span>
-            <input
-              className="input"
+            <TextField
+              label="Password"
               type="password"
               autoComplete="current-password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              required
+              error={error}
             />
-          </label>
+          </div>
 
+          {/* The message itself shows under the password field; this announces it */}
           {error && (
-            <div className="alert alert-danger" role="alert">
-              <AlertCircle size={18} aria-hidden="true" />
-              <span>{error}</span>
-            </div>
+            <span className="visually-hidden" role="alert">
+              {error}
+            </span>
           )}
 
           <button type="submit" className="btn btn-primary" disabled={submitting || !email || !password}>

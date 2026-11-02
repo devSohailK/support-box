@@ -1,10 +1,11 @@
+/* Form card: an elevated sheet holding one task */
 .form-card {
   display: grid;
-  gap: var(--s-5);
-  padding: var(--s-6);
-  background: var(--surface);
-  border: 1px solid var(--line);
-  border-radius: var(--r-lg);
+  gap: var(--s-3);
+  padding: var(--s-5);
+  background: var(--md-surface-container-lowest);
+  border-radius: var(--md-shape-lg);
+  box-shadow: var(--md-elev-1);
 }
 
 .form-row {
@@ -20,7 +21,7 @@
   justify-content: space-between;
   gap: var(--s-3);
   padding-top: var(--s-4);
-  border-top: 1px solid var(--line);
+  border-top: 1px solid var(--md-outline-variant);
 }
 
 .form-note {
@@ -30,7 +31,140 @@
 }
 
 .form-note svg {
-  color: var(--ai);
+  color: var(--md-tertiary);
+}
+
+/*
+ * Filled text field (ui/TextField.tsx).
+ * Container: surface-container-highest, extra-small top corners, square bottom.
+ * The active indicator is an inset box-shadow that grows from 1px to 2px on focus
+ * (::after is taken by the state layer).
+ */
+.tf-wrap {
+  display: grid;
+}
+
+.tf {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  min-height: 56px;
+  background: var(--md-surface-container-highest);
+  border-radius: var(--md-shape-xs) var(--md-shape-xs) 0 0;
+  box-shadow: inset 0 -1px 0 var(--md-on-surface-variant);
+  transition: box-shadow var(--fast) var(--ease);
+}
+
+.tf:hover {
+  box-shadow: inset 0 -1px 0 var(--md-on-surface);
+}
+
+/* The state layer reacts to hover only; the focus line carries focus */
+.tf:focus-within::after {
+  opacity: 0;
+}
+
+.tf:focus-within {
+  box-shadow: inset 0 -2px 0 var(--md-primary);
+}
+
+.tf-input {
+  flex: 1;
+  width: 100%;
+  min-width: 0;
+  min-height: 56px;
+  padding: 24px var(--s-4) 6px;
+  border: 0;
+  background: transparent;
+  font: var(--md-body-large);
+  color: var(--md-on-surface);
+  caret-color: var(--md-primary);
+}
+
+.tf-input:focus,
+.tf-input:focus-visible {
+  outline: none;
+}
+
+.tf.is-multiline .tf-input {
+  padding-top: 28px;
+  resize: vertical;
+}
+
+/* Label rests in the middle like a placeholder, then floats to the top on focus or with a value */
+.tf-label {
+  position: absolute;
+  left: var(--s-4);
+  right: var(--s-4);
+  top: 16px;
+  display: flex;
+  gap: 2px;
+  font: var(--md-body-large);
+  color: var(--md-on-surface-variant);
+  pointer-events: none;
+  transform-origin: left top;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition:
+    transform var(--medium) var(--ease-emphasized),
+    color var(--fast) var(--ease);
+}
+
+.tf-input:focus ~ .tf-label,
+.tf-input:not(:placeholder-shown) ~ .tf-label {
+  transform: translateY(-9px) scale(0.75);
+}
+
+.tf:focus-within .tf-label {
+  color: var(--md-primary);
+}
+
+.tf-trailing {
+  flex: none;
+  align-self: center;
+  margin-right: var(--s-3);
+  color: var(--md-error);
+}
+
+.tf.is-multiline .tf-trailing {
+  align-self: flex-start;
+  margin-top: var(--s-4);
+}
+
+.tf-support {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--s-3);
+  min-height: 20px;
+  padding: var(--s-1) var(--s-4) 0;
+  font: var(--md-body-small);
+  color: var(--md-on-surface-variant);
+}
+
+.tf-counter {
+  margin-left: auto;
+  white-space: nowrap;
+}
+
+/* Error: label, indicator, icon and supporting text all switch to the error role */
+.tf.is-error,
+.tf.is-error:hover {
+  box-shadow: inset 0 -1px 0 var(--md-error);
+}
+
+.tf.is-error:focus-within {
+  box-shadow: inset 0 -2px 0 var(--md-error);
+}
+
+.tf.is-error .tf-label,
+.tf.is-error:focus-within .tf-label,
+.tf-support.is-error {
+  color: var(--md-error);
+}
+
+.tf.is-error .tf-input {
+  caret-color: var(--md-error);
 }
 
 .boot {
@@ -43,6 +177,6 @@
 
 @media (max-width: 640px) {
   .form-card {
-    padding: var(--s-5) var(--s-4);
+    padding: var(--s-4);
   }
 }
