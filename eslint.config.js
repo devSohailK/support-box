@@ -4,7 +4,17 @@ import globals from 'globals';
 import tseslint from 'typescript-eslint';
 
 export default tseslint.config(
-  { ignores: ['**/dist/**', '**/node_modules/**', 'server/drizzle/**'] },
+  {
+    ignores: [
+      '**/dist/**',
+      '**/node_modules/**',
+      'server/drizzle/**',
+      // Vendored AI-agent skills (browser scripts we don't own), not app code.
+      '.github/skills/**',
+      '.claude/**',
+      '.agents/**',
+    ],
+  },
   js.configs.recommended,
   ...tseslint.configs.recommended,
   {
