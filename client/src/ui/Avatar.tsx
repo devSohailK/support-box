@@ -1,5 +1,5 @@
-// Soft, distinguishable hues; white text passes 4.5:1 on all of them.
-const HUES = ['#0f766e', '#6d4fd8', '#b45309', '#1d4ed8', '#be185d', '#047857', '#7c3aed', '#c2410c'];
+// Muted warm neutrals (--md-avatar-1..8): tell people apart without borrowing the status colours.
+const HUE_COUNT = 8;
 
 function initials(name: string) {
   const parts = name.replace(/[<>@].*$/, '').trim().split(/\s+/).filter(Boolean);
@@ -12,7 +12,7 @@ function initials(name: string) {
 function hueFor(seed: string) {
   let h = 0;
   for (const c of seed) h = (h * 31 + c.charCodeAt(0)) >>> 0;
-  return HUES[h % HUES.length]!;
+  return `var(--md-avatar-${(h % HUE_COUNT) + 1})`;
 }
 
 export function Avatar({ name, seed, size = 36 }: { name: string; seed?: string; size?: number }) {

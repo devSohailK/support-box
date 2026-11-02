@@ -177,6 +177,12 @@ export function countTickets(db: Db, userId: number): TicketCounts {
       .from(tickets)
       .where(and(eq(tickets.assigneeId, userId), ne(tickets.status, 'closed')))
       .get()?.n ?? 0;
+  const mineActionable =
+    db
+      .select({ n: count() })
+      .from(tickets)
+      .where(and(eq(tickets.assigneeId, userId), inArray(tickets.status, ['open', 'ai_error'])))
+      .get()?.n ?? 0;
   const overdue =
     db
       .select({ n: count() })
@@ -184,7 +190,7 @@ export function countTickets(db: Db, userId: number): TicketCounts {
       .where(and(inArray(tickets.status, [...UNREPLIED_STATUSES]), lt(tickets.createdAt, cutoff)))
       .get()?.n ?? 0;
   const all = Object.values(counts).reduce((a, b) => a + b, 0);
-  return { ...counts, all, mine, overdue };
+  return { ...counts, all, mine, mineActionable, overdue };
 }
 
 export const canEdit = (user: CurrentUser, assigneeId: number) =>

@@ -40,7 +40,7 @@ export function ConfirmDialog({ open, title, children, confirmLabel, busy, busyL
         <h2 id={titleId}>{title}</h2>
         <div className="dialog-content">{children}</div>
         <div className="dialog-actions">
-          <button className="btn btn-secondary" onClick={onCancel} disabled={busy}>
+          <button className="btn btn-ghost" onClick={onCancel} disabled={busy}>
             Cancel
           </button>
           <button className="btn btn-primary" onClick={onConfirm} disabled={busy} autoFocus>

@@ -1,118 +1,238 @@
 /*
- * Design tokens: "Warm desk". See docs/DESIGN.md.
+ * Design tokens: Material 3 roles on a warm cream world. See docs/DESIGN.md.
  * Components use these variables only; never raw hex values.
+ *
+ * Layer 1: --md-* roles (color, elevation, state, shape, type).
+ * Layer 2: short aliases the stylesheets use (--surface, --ink, --primary...), each pointing at a role.
  */
 :root {
   color-scheme: light;
 
-  /* Neutrals: warm cream paper */
-  --bg: #eeebe4;
-  --surface: #fbfaf7;
-  --surface-sunken: #e6e2d9;
-  --ink: #23211c;
-  --ink-soft: #4a463e;
-  --ink-faint: #67625a; /* 5.0:1 on --bg: lowest allowed for text */
-  --line: #e0dbd0;
-  --line-strong: #cbc4b5;
-  --row-hover: #f4f1ea;
+  /* Primary: cobalt. Filled actions, "needs you", focus. */
+  --md-primary: #2e47d6;
+  --md-on-primary: #ffffff;
+  --md-primary-container: #dfe3ff;
+  --md-on-primary-container: #0c1c80;
 
-  /* The one bold accent: cobalt, for actions and sent replies */
-  --primary: #2e47d6;
-  --primary-hover: #2237b4;
-  --primary-soft: #e4e8fb;
-  --on-primary: #ffffff;
+  /* Secondary: warm taupe. Tonal buttons, active nav and segment indicators. */
+  --md-secondary: #6a5d4d;
+  --md-on-secondary: #ffffff;
+  --md-secondary-container: #ebe1d2;
+  --md-on-secondary-container: #251a0f;
 
-  /* AI: muted plum, used only for machine-produced content */
-  --ai: #7d3f98;
-  --ai-soft: #f5eef6;
-  --ai-line: #e4d3ea;
+  /* Tertiary: plum. Only machine-produced content (AI drafts, drafting state). */
+  --md-tertiary: #7d3f98;
+  --md-on-tertiary: #ffffff;
+  --md-tertiary-container: #f5e9f8;
+  --md-on-tertiary-container: #3b0a52;
 
-  /* Urgency and states */
-  --urgent: #b8410f;
-  --urgent-soft: #f9e6db;
-  --normal: #8f5a06;
-  --normal-soft: #f6ecd4;
-  --low: #57534b;
-  --low-soft: #e9e5dc;
-  --danger: #b42318;
-  --danger-soft: #f9e3df;
-  --success: #2f7a3e;
-  --success-soft: #e2f0e2;
+  /* Error: also time pressure (urgent, overdue). */
+  --md-error: #b42318;
+  --md-on-error: #ffffff;
+  --md-error-container: #fbe2de;
+  --md-on-error-container: #5c0c06;
 
-  /* Type: friendly but compact */
+  /* Status roles outside the M3 core */
+  --md-warn: #8a5300;
+  --md-warn-container: #f6e9cf;
+  --md-success: #2f7a3e;
+  --md-success-container: #e0efe0;
+  --md-success-outline: #bfdcc1;
+
+  /* Surfaces: tonal steps from the cream canvas toward white (lift) and toward taupe (recess) */
+  --md-surface: #eeebe4;
+  --md-surface-container-lowest: #fdfcf9;
+  --md-surface-container-low: #f6f3ed;
+  --md-surface-container: #f1ede5;
+  --md-surface-container-high: #e8e3d9;
+  --md-surface-container-highest: #e1dbcf;
+  --md-on-surface: #23211c;
+  --md-on-surface-variant: #4a463e;
+  --md-on-surface-muted: #67625a; /* 5.0:1 on surface: lowest allowed for text */
+  --md-outline: #8a8377; /* 3:1 on surfaces: field and button outlines */
+  --md-outline-variant: #dcd6ca; /* dividers and card edges */
+  --md-inverse-surface: #33302a;
+  --md-inverse-on-surface: #f4efe6;
+  --md-inverse-primary: #b9c3ff;
+  --md-scrim: rgb(35 33 28 / 0.42);
+
+  /* Avatars: muted warm neutrals; white initials pass 4.5:1 on each */
+  --md-avatar-1: #6b5e4f;
+  --md-avatar-2: #5b6656;
+  --md-avatar-3: #7a5a52;
+  --md-avatar-4: #56606b;
+  --md-avatar-5: #6f6150;
+  --md-avatar-6: #625a6e;
+  --md-avatar-7: #4f6460;
+  --md-avatar-8: #735d66;
+  --md-on-avatar: #ffffff;
+
+  /* Elevation: warm-tinted key + ambient shadows */
+  --md-shadow: 48 40 24;
+  --md-elev-0: none;
+  --md-elev-1: 0 1px 2px rgb(var(--md-shadow) / 0.12), 0 1px 3px 1px rgb(var(--md-shadow) / 0.06);
+  --md-elev-2: 0 1px 2px rgb(var(--md-shadow) / 0.12), 0 2px 6px 2px rgb(var(--md-shadow) / 0.08);
+  --md-elev-3: 0 4px 8px 3px rgb(var(--md-shadow) / 0.08), 0 1px 3px rgb(var(--md-shadow) / 0.12);
+  --md-elev-4: 0 6px 10px 4px rgb(var(--md-shadow) / 0.08), 0 2px 3px rgb(var(--md-shadow) / 0.12);
+
+  /* State layers: an overlay of the content color at these opacities */
+  --md-state-hover: 0.08;
+  --md-state-focus: 0.1;
+  --md-state-pressed: 0.12;
+  --md-state-drag: 0.16;
+
+  /* Shape scale */
+  --md-shape-xs: 4px; /* text fields */
+  --md-shape-sm: 8px;
+  --md-shape-md: 12px; /* buttons, chips */
+  --md-shape-lg: 16px; /* cards, sheets, FAB */
+  --md-shape-xl: 28px; /* dialogs */
+  --md-shape-full: 999px;
+
+  /* Type scale (size / line height / weight) */
   --font: 'Nunito Sans Variable', 'Nunito Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
-  --text-xs: 0.75rem; /* 12px: metadata only */
+  --md-headline-small: 750 1.5rem/2rem var(--font);
+  --md-title-large: 750 1.25rem/1.75rem var(--font);
+  --md-title-medium: 700 1rem/1.5rem var(--font);
+  --md-title-small: 700 0.875rem/1.25rem var(--font);
+  --md-body-large: 400 1rem/1.5rem var(--font);
+  --md-body-medium: 400 0.875rem/1.25rem var(--font);
+  --md-body-small: 400 0.75rem/1rem var(--font);
+  --md-label-large: 650 0.875rem/1.25rem var(--font);
+  --md-label-medium: 650 0.75rem/1rem var(--font);
+  --md-label-small: 650 0.6875rem/1rem var(--font);
+
+  /* Motion */
+  --ease: cubic-bezier(0.2, 0, 0, 1); /* M3 standard */
+  --ease-emphasized: cubic-bezier(0.05, 0.7, 0.1, 1);
+  --fast: 140ms;
+  --medium: 180ms;
+
+  /* ---- Aliases used by the stylesheets ---- */
+  --bg: var(--md-surface);
+  --surface: var(--md-surface-container-lowest);
+  --surface-sunken: var(--md-surface-container-high);
+  --row-hover: var(--md-surface-container-low);
+  --ink: var(--md-on-surface);
+  --ink-soft: var(--md-on-surface-variant);
+  --ink-faint: var(--md-on-surface-muted);
+  --line: var(--md-outline-variant);
+  --line-strong: var(--md-outline);
+
+  --primary: var(--md-primary);
+  --primary-hover: var(--md-on-primary-container);
+  --primary-soft: var(--md-primary-container);
+  --on-primary: var(--md-on-primary);
+
+  --ai: var(--md-tertiary);
+  --ai-soft: var(--md-tertiary-container);
+  --ai-line: color-mix(in srgb, var(--md-tertiary) 22%, transparent);
+  --on-ai: var(--md-on-tertiary);
+
+  --urgent: var(--md-error);
+  --urgent-soft: var(--md-error-container);
+  --on-urgent: var(--md-on-error);
+  --danger: var(--md-error);
+  --danger-soft: var(--md-error-container);
+  --warn: var(--md-warn);
+  --warn-soft: var(--md-warn-container);
+  --success: var(--md-success);
+  --success-soft: var(--md-success-container);
+  --success-line: var(--md-success-outline);
+  --low: var(--md-on-surface-variant);
+  --low-soft: var(--md-surface-container-high);
+
+  --text-xs: 0.75rem;
   --text-sm: 0.8125rem;
-  --text-md: 0.9375rem;
-  --text-lg: 1.0625rem;
+  --text-md: 0.875rem;
+  --text-lg: 1rem;
   --text-xl: 1.25rem;
   --text-2xl: 1.5rem;
-  --leading: 1.5;
+  --leading: 1.43;
 
-  /* Space (compact scale) */
+  --w-regular: 400;
+  --w-medium: 650;
+  --w-bold: 750;
+
+  /* Space: 4 / 8 / 12 / 16 / 24 / 32 / 48 */
   --s-1: 4px;
   --s-2: 8px;
   --s-3: 12px;
   --s-4: 16px;
-  --s-5: 20px;
-  --s-6: 28px;
-  --s-7: 40px;
+  --s-5: 24px;
+  --s-6: 32px;
+  --s-7: 48px;
 
-  /* Shape: 8 to 12px, following hierarchy (controls < rows < panels) */
-  --r-sm: 8px;
-  --r-md: 10px;
-  --r-lg: 12px;
-  --r-pill: 999px;
+  /* One control height for buttons, segments and nav items; 48px on touch screens */
+  --control: 40px;
 
-  --shadow-pop: 0 12px 32px rgba(48, 40, 24, 0.16), 0 2px 6px rgba(48, 40, 24, 0.08);
-  --shadow-soft: 0 1px 2px rgba(48, 40, 24, 0.06);
-  --focus: 0 0 0 3px rgba(46, 71, 214, 0.35);
-  --backdrop: rgba(35, 33, 28, 0.42);
+  --r-sm: var(--md-shape-sm);
+  --r-md: var(--md-shape-md);
+  --r-lg: var(--md-shape-lg);
+  --r-pill: var(--md-shape-full);
 
-  /* Motion: hover and focus stay in the 120 to 180ms band */
-  --ease: cubic-bezier(0.2, 0.8, 0.2, 1);
-  --fast: 140ms;
-  --medium: 180ms;
+  --shadow-soft: var(--md-elev-1);
+  --shadow-pop: var(--md-elev-3);
+  --backdrop: var(--md-scrim);
 
-  --sidebar-w: 232px;
+  --sidebar-w: 248px;
+}
+
+@media (pointer: coarse) {
+  :root {
+    --control: 48px;
+  }
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
     color-scheme: dark;
-    --bg: #1a1814;
-    --surface: #23201b;
-    --surface-sunken: #2b2721;
-    --ink: #efebe2;
-    --ink-soft: #c9c2b4;
-    --ink-faint: #a29a8b;
-    --line: #34302a;
-    --line-strong: #474137;
-    --row-hover: #2a2620;
 
-    --primary: #8597ff;
-    --primary-hover: #a3b1ff;
-    --primary-soft: #252b4a;
-    --on-primary: #10163a;
+    --md-primary: #b9c3ff;
+    --md-on-primary: #0c1c80;
+    --md-primary-container: #2338b0;
+    --md-on-primary-container: #dfe3ff;
 
-    --ai: #d29be6;
-    --ai-soft: #2d2232;
-    --ai-line: #4b3655;
+    --md-secondary: #d6c5b0;
+    --md-on-secondary: #3a2f22;
+    --md-secondary-container: #4f4537;
+    --md-on-secondary-container: #f3e5d2;
 
-    --urgent: #f59a6b;
-    --urgent-soft: #3a2116;
-    --normal: #e3b341;
-    --normal-soft: #33290f;
-    --low: #b9b1a3;
-    --low-soft: #2b2721;
-    --danger: #f28b82;
-    --danger-soft: #3a1d1b;
-    --success: #7ccf8c;
-    --success-soft: #1b2e1e;
+    --md-tertiary: #e6b5f5;
+    --md-on-tertiary: #4a1764;
+    --md-tertiary-container: #3b2244;
+    --md-on-tertiary-container: #f7dcff;
 
-    --shadow-pop: 0 12px 32px rgba(0, 0, 0, 0.5);
-    --shadow-soft: 0 1px 2px rgba(0, 0, 0, 0.3);
-    --focus: 0 0 0 3px rgba(133, 151, 255, 0.45);
-    --backdrop: rgba(0, 0, 0, 0.55);
+    --md-error: #ffb4a9;
+    --md-on-error: #690003;
+    --md-error-container: #4a1b16;
+    --md-on-error-container: #ffdad5;
+
+    --md-warn: #e9bd5f;
+    --md-warn-container: #3a2c0d;
+    --md-success: #8fd79c;
+    --md-success-container: #1b2f1f;
+    --md-success-outline: #2f5234;
+
+    --md-surface: #171512;
+    --md-surface-container-lowest: #12100d;
+    --md-surface-container-low: #1f1c18;
+    --md-surface-container: #23201b;
+    --md-surface-container-high: #2e2a24;
+    --md-surface-container-highest: #39342d;
+    --md-on-surface: #ece6dc;
+    --md-on-surface-variant: #cfc6b8;
+    --md-on-surface-muted: #a8a093;
+    --md-outline: #978f82;
+    --md-outline-variant: #3d3830;
+    --md-inverse-surface: #ece6dc;
+    --md-inverse-on-surface: #33302a;
+    --md-inverse-primary: #2e47d6;
+    --md-scrim: rgb(0 0 0 / 0.6);
+
+    --md-shadow: 0 0 0;
+
+    /* In the dark, lifted cards are lighter than the canvas */
+    --surface: var(--md-surface-container-low);
   }
 }

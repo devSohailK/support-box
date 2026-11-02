@@ -43,6 +43,8 @@ export type TicketListQuery = z.infer<typeof ticketListQuerySchema>;
 export type TicketCounts = Record<TicketStatus, number> & {
   all: number;
   mine: number;
+  // Assigned to me and waiting on me (Needs reply or AI failed): drives the inbox-zero moment.
+  mineActionable: number;
   overdue: number;
 };
 

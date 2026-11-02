@@ -1,10 +1,11 @@
-import { AlarmClock, Archive, Inbox, LogOut, Plus, UserRound } from 'lucide-react';
-import type { ReactNode } from 'react';
+import { AlarmClock, Archive, Check, Inbox, LogOut, Plus, UserRound } from 'lucide-react';
+import { useEffect, useRef, type ReactNode } from 'react';
 import { Link, useLocation } from 'react-router';
 import type { TicketCounts } from '@support-box/shared';
 import { useAuth } from '../auth';
 import { Avatar } from '../ui/Avatar';
-import { useCounts } from '../ui/counts';
+import { AnimatedCount, useCounts } from '../ui/counts';
+import { wobble } from '../ui/motion';
 
 type View = {
   label: string;
@@ -14,6 +15,8 @@ type View = {
   // Which list query this view represents, for the active state.
   matches: (p: URLSearchParams) => boolean;
   alert?: boolean;
+  // Show a check mark at zero instead of hiding the badge (inbox zero).
+  zeroCheck?: boolean;
 };
 
 const VIEWS: View[] = [
@@ -21,8 +24,10 @@ const VIEWS: View[] = [
     label: 'My tickets',
     to: '/?mine=true',
     icon: UserRound,
-    count: (c) => c.mine,
+    // What's waiting on me (Needs reply or AI failed), not everything I own.
+    count: (c) => c.mineActionable,
     matches: (p) => p.get('mine') === 'true',
+    zeroCheck: true,
   },
   {
     label: 'All tickets',
@@ -50,7 +55,11 @@ const VIEWS: View[] = [
 
 export function AppShell({ children }: { children: ReactNode }) {
   const { user, logout } = useAuth();
-  const { counts } = useCounts();
+  const { counts, zeroAt } = useCounts();
+  const zeroRef = useRef<HTMLSpanElement>(null);
+  useEffect(() => {
+    if (zeroAt) wobble(zeroRef.current);
+  }, [zeroAt]);
   const location = useLocation();
   const params = new URLSearchParams(location.search);
   const onList = location.pathname === '/';
@@ -65,9 +74,9 @@ export function AppShell({ children }: { children: ReactNode }) {
           <span className="brand-name">Support Inbox</span>
         </Link>
 
-        <Link to="/tickets/new" className="btn btn-primary sidebar-new">
-          <Plus size={18} aria-hidden="true" />
-          New ticket
+        <Link to="/tickets/new" className="btn sidebar-new">
+          <Plus size={22} aria-hidden="true" />
+          <span className="sidebar-new-label">New ticket</span>
         </Link>
 
         <nav className="views" aria-label="Ticket views">
@@ -79,15 +88,21 @@ export function AppShell({ children }: { children: ReactNode }) {
               <Link
                 key={v.label}
                 to={v.to}
-                className={`view${active ? ' is-active' : ''}`}
+                className={`view state-layer${active ? ' is-active' : ''}`}
                 aria-current={active ? 'page' : undefined}
               >
                 <Icon size={18} aria-hidden="true" />
                 <span className="view-label">{v.label}</span>
                 {n !== null && n > 0 && (
-                  <span className={`view-count${v.alert ? ' is-alert' : ''}`}>
-                    {n}
-                    <span className="visually-hidden"> tickets</span>
+                  <span className={`view-count${v.alert ? ' is-alert' : ''}${v.zeroCheck ? ' is-mine' : ''}`}>
+                    <AnimatedCount value={n} />
+                    <span className="visually-hidden">{v.zeroCheck ? ' waiting on you' : ' tickets'}</span>
+                  </span>
+                )}
+                {n === 0 && v.zeroCheck && (
+                  <span className="view-zero" ref={zeroRef} title="Nothing waiting on you">
+                    <Check size={14} strokeWidth={3} aria-hidden="true" />
+                    <span className="visually-hidden">Nothing waiting on you</span>
                   </span>
                 )}
               </Link>

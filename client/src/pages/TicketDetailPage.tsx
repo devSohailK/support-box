@@ -10,16 +10,17 @@ import {
   Send,
   Sparkles,
 } from 'lucide-react';
-import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { Link, useNavigate, useParams } from 'react-router';
+import { useCallback, useEffect, useState } from 'react';
+import { Link, useLocation, useNavigate, useParams } from 'react-router';
 import { MAX_REPLY_CHARS, type AssignableUser, type TicketDetail } from '@support-box/shared';
 import { api, ApiError } from '../api';
 import { useAuth } from '../auth';
 import { Avatar } from '../ui/Avatar';
 import { CATEGORY_LABELS, OverduePill, StatusPill, UrgencyPill } from '../ui/Badges';
+import type { ListReturnState } from './TicketListPage';
 import { ConfirmDialog } from '../ui/ConfirmDialog';
 import { useCounts } from '../ui/counts';
-import { wobble } from '../ui/motion';
+import { useTicketKeys } from '../ui/keys';
 import { formatDate, RelativeTime } from '../ui/time';
 import { useToast } from '../ui/Toast';
 
@@ -44,6 +45,7 @@ const SKIP_REASONS: Record<string, string> = {
 };
 
 type Act = (path: string, body?: unknown, method?: 'POST' | 'PUT') => Promise<TicketDetail | null>;
+type Done = () => void;
 
 export function TicketDetailPage() {
   const { id = '' } = useParams();
@@ -53,6 +55,9 @@ export function TicketDetailPage() {
 
 function TicketView({ id }: { id: string }) {
   const navigate = useNavigate();
+  const location = useLocation();
+  // The list view this ticket was opened from, so we can return to the same filters.
+  const from = (location.state as { from?: string } | null)?.from;
   const toast = useToast();
   const { refresh: refreshCounts } = useCounts();
   const [ticket, setTicket] = useState<TicketDetail | null>(null);
@@ -122,15 +127,20 @@ function TicketView({ id }: { id: string }) {
     [id, refreshCounts],
   );
 
-  // Celebrate a reply going out (not a reply that was already there when the page opened).
-  const threadRef = useRef<HTMLElement>(null);
-  const hadReply = useRef<boolean | null>(null);
-  useLayoutEffect(() => {
-    if (!ticket) return;
-    const hasReply = Boolean(ticket.reply && ticket.reply.deliveryStatus !== 'failed');
-    if (hadReply.current === false && hasReply) wobble(threadRef.current?.querySelector('.message-sent') ?? null);
-    hadReply.current = hasReply;
-  }, [ticket]);
+  const back = useCallback(() => {
+    if (from !== undefined) navigate(`/${from ? `?${from}` : ''}`);
+    else if (history.length > 1) navigate(-1);
+    else navigate('/');
+  }, [from, navigate]);
+
+  // Auto-advance: after a send or close, return to the list where this ticket leaves and the next one
+  // gets focus.
+  const done: Done = useCallback(() => {
+    const state: ListReturnState = { leaving: Number(id) };
+    navigate(`/${from ? `?${from}` : ''}`, { state });
+  }, [from, id, navigate]);
+
+  useTicketKeys({ onEdit: () => document.getElementById('reply')?.focus(), onBack: back });
 
   if (loadError) {
     return (
@@ -153,12 +163,15 @@ function TicketView({ id }: { id: string }) {
   async function close() {
     const t = await act(`/tickets/${ticket!.id}/close`);
     setConfirmClose(false);
-    if (t) toast('Ticket closed. One less on the pile.');
+    if (t) {
+      toast('Ticket closed. One less on the pile.');
+      done();
+    }
   }
 
   return (
     <div className="page detail-page">
-      <button className="btn btn-ghost btn-sm back" onClick={() => (history.length > 1 ? navigate(-1) : navigate('/'))}>
+      <button className="btn btn-ghost btn-sm back" onClick={back} title="Back (Esc)">
         <ArrowLeft size={16} aria-hidden="true" />
         Back
       </button>
@@ -167,16 +180,18 @@ function TicketView({ id }: { id: string }) {
         <h1>{ticket.subject}</h1>
         <div className="detail-badges">
           <StatusPill status={ticket.status} />
+          <UrgencyPill urgency={ticket.urgency} />
           {ticket.overdue && <OverduePill />}
+          {ticket.category && <span className="tag">{CATEGORY_LABELS[ticket.category]}</span>}
           <span className="muted small">Ticket #{ticket.id}</span>
         </div>
       </header>
 
       <div className="detail-grid">
-        <section className="thread" aria-label="Conversation" ref={threadRef}>
+        <section className="thread" aria-label="Conversation">
           <article className="message message-customer">
             <header className="message-head">
-              <Avatar name={ticket.fromName || ticket.fromEmail} seed={ticket.fromEmail} size={40} />
+              <Avatar name={ticket.fromName || ticket.fromEmail} seed={ticket.fromEmail} size={32} />
               <div className="message-who">
                 <strong>{ticket.fromName || ticket.fromEmail}</strong>
                 {ticket.fromName && <span className="muted small">{ticket.fromEmail}</span>}
@@ -205,7 +220,7 @@ function TicketView({ id }: { id: string }) {
           ) : (
             <>
               <AiStatus ticket={ticket} busy={busy} act={act} />
-              <Composer ticket={ticket} busy={busy} act={act} />
+              <Composer ticket={ticket} busy={busy} act={act} done={done} />
             </>
           )}
         </section>
@@ -220,14 +235,15 @@ function TicketView({ id }: { id: string }) {
                   <AssigneeControl ticket={ticket} busy={busy} act={act} />
                 </dd>
               </div>
-              <div>
-                <dt>Urgency</dt>
-                <dd>{ticket.urgency ? <UrgencyPill urgency={ticket.urgency} /> : <Pending ticket={ticket} />}</dd>
-              </div>
-              <div>
-                <dt>Category</dt>
-                <dd>{ticket.category ? CATEGORY_LABELS[ticket.category] : <Pending ticket={ticket} />}</dd>
-              </div>
+              {/* Urgency and category sit in the header once set; this only explains why they're missing. */}
+              {(!ticket.urgency || !ticket.category) && (
+                <div>
+                  <dt>Urgency and category</dt>
+                  <dd>
+                    <Pending ticket={ticket} />
+                  </dd>
+                </div>
+              )}
               <div>
                 <dt>Received</dt>
                 <dd>
@@ -293,7 +309,7 @@ function TicketView({ id }: { id: string }) {
 }
 
 function Pending({ ticket }: { ticket: TicketDetail }) {
-  return <span className="muted">{ticket.status === 'new' && !ticket.aiSkipReason ? 'Being set by AI…' : 'Not set'}</span>;
+  return <span className="muted">{ticket.status === 'new' && !ticket.aiSkipReason ? 'Being set by AI...' : 'Not set'}</span>;
 }
 
 function AiStatus({ ticket, busy, act }: { ticket: TicketDetail; busy: boolean; act: Act }) {
@@ -354,7 +370,7 @@ function AiStatus({ ticket, busy, act }: { ticket: TicketDetail; busy: boolean; 
   return null;
 }
 
-function Composer({ ticket, busy, act }: { ticket: TicketDetail; busy: boolean; act: Act }) {
+function Composer({ ticket, busy, act, done }: { ticket: TicketDetail; busy: boolean; act: Act; done: Done }) {
   const toast = useToast();
   const [text, setText] = useState(ticket.draft ?? '');
   const [savedText, setSavedText] = useState(ticket.draft ?? '');
@@ -391,7 +407,10 @@ function Composer({ ticket, busy, act }: { ticket: TicketDetail; busy: boolean; 
   async function send() {
     const t = await act(`/tickets/${ticket.id}/send`, { body: text });
     setConfirming(false);
-    if (t) toast(`Reply sent to ${recipient}`);
+    if (t) {
+      toast(`Reply sent to ${recipient}`);
+      done();
+    }
   }
 
   return (
@@ -418,7 +437,14 @@ function Composer({ ticket, busy, act }: { ticket: TicketDetail; busy: boolean; 
         className="composer-input"
         value={text}
         onChange={(e) => setText(e.target.value)}
-        rows={12}
+        onKeyDown={(e) => {
+          // Ctrl/Cmd+Enter opens the send confirmation; it never sends on its own.
+          if (e.key === 'Enter' && (e.ctrlKey || e.metaKey) && !busy && text.trim()) {
+            e.preventDefault();
+            setConfirming(true);
+          }
+        }}
+        rows={10}
         maxLength={MAX_REPLY_CHARS}
         placeholder={`Write your reply to ${recipient}…`}
       />
@@ -427,11 +453,19 @@ function Composer({ ticket, busy, act }: { ticket: TicketDetail; busy: boolean; 
         <span className="muted xs">
           {dirty ? 'Unsaved changes' : `${text.length.toLocaleString()} / ${MAX_REPLY_CHARS.toLocaleString()}`}
         </span>
+        <span className="kbd-hint muted xs">
+          <kbd>Ctrl</kbd> <kbd>Enter</kbd> to send
+        </span>
         <span className="spacer" />
         <button className="btn btn-ghost" disabled={busy || !dirty} onClick={() => void save()}>
           Save draft
         </button>
-        <button className="btn btn-primary" disabled={busy || !text.trim()} onClick={() => setConfirming(true)}>
+        <button
+          className="btn btn-primary"
+          disabled={busy || !text.trim()}
+          title={text.trim() ? undefined : 'Write a reply first'}
+          onClick={() => setConfirming(true)}
+        >
           <Send size={16} aria-hidden="true" />
           Send reply
         </button>
@@ -460,7 +494,7 @@ function SentReply({ ticket }: { ticket: TicketDetail }) {
   return (
     <article className="message message-sent">
       <header className="message-head">
-        <Avatar name={reply.sentBy.name} size={40} />
+        <Avatar name={reply.sentBy.name} size={32} />
         <div className="message-who">
           <strong>
             {reply.deliveryStatus === 'sent' ? 'Sent' : 'Sending'} by {reply.sentBy.name}
@@ -531,8 +565,8 @@ function DetailSkeleton() {
     <div className="page" aria-busy="true" aria-label="Loading ticket">
       <span className="skeleton" style={{ display: 'block', width: '50%', height: 28, marginTop: 56 }} />
       <div className="detail-grid" style={{ marginTop: 24 }}>
-        <span className="skeleton" style={{ display: 'block', height: 220, borderRadius: 18 }} />
-        <span className="skeleton" style={{ display: 'block', height: 220, borderRadius: 18 }} />
+        <span className="skeleton" style={{ display: 'block', height: 220, borderRadius: 10 }} />
+        <span className="skeleton" style={{ display: 'block', height: 220, borderRadius: 10 }} />
       </div>
     </div>
   );

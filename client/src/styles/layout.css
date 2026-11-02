@@ -1,10 +1,14 @@
-/* App shell: sidebar + content */
+/* App shell: navigation drawer (surface-container-low) + content on the surface canvas */
 .shell {
   display: grid;
   grid-template-columns: var(--sidebar-w) minmax(0, 1fr);
   min-height: 100vh;
-  /* Sidebar column color runs the full page height, even below the sticky sidebar. */
-  background: linear-gradient(to right, var(--surface) var(--sidebar-w), var(--bg) var(--sidebar-w));
+  /* Drawer color runs the full page height, even below the sticky drawer. */
+  background: linear-gradient(
+    to right,
+    var(--md-surface-container-low) var(--sidebar-w),
+    var(--md-surface) var(--sidebar-w)
+  );
 }
 
 .sidebar {
@@ -13,20 +17,19 @@
   height: 100vh;
   display: flex;
   flex-direction: column;
-  gap: var(--s-5);
-  padding: var(--s-5) var(--s-4);
-  background: var(--surface);
-  border-right: 1px solid var(--line);
+  gap: var(--s-4);
+  padding: var(--s-4) var(--s-3);
+  background: var(--md-surface-container-low);
 }
 
 .brand {
   display: flex;
   align-items: center;
   gap: var(--s-3);
-  padding: 0 var(--s-2);
+  min-height: var(--control);
+  padding: 0 var(--s-3);
   color: var(--ink);
-  font-weight: 800;
-  font-size: var(--text-lg);
+  font: var(--md-title-medium);
 }
 
 .brand:hover {
@@ -36,15 +39,26 @@
 .brand-mark {
   display: grid;
   place-items: center;
-  width: 34px;
-  height: 34px;
-  border-radius: var(--r-md);
-  background: var(--primary);
-  color: var(--on-primary);
+  width: 32px;
+  height: 32px;
+  border-radius: var(--md-shape-sm);
+  background: var(--md-primary);
+  color: var(--md-on-primary);
 }
 
+/* Extended FAB: the drawer's one primary action */
 .sidebar-new {
-  width: 100%;
+  align-self: flex-start;
+  min-height: 56px;
+  padding: 0 var(--s-5) 0 var(--s-4);
+  border-radius: var(--md-shape-lg);
+  background: var(--md-primary-container);
+  color: var(--md-on-primary-container);
+  box-shadow: var(--md-elev-3);
+}
+
+.sidebar-new:hover:not(:disabled) {
+  box-shadow: var(--md-elev-4);
 }
 
 .sidebar-new:hover {
@@ -53,31 +67,34 @@
 
 .views {
   display: grid;
-  gap: 2px;
+  gap: 0;
 }
 
+/* Drawer items: full-round active indicator in secondary-container */
 .view {
+  /* Contains its screen-reader text, so it can't leak out of the scrolling bar on phones */
+  position: relative;
   display: flex;
   align-items: center;
   gap: var(--s-3);
-  min-height: 38px;
-  padding: 0 var(--s-3);
-  border-radius: var(--r-sm);
-  color: var(--ink-soft);
-  font-weight: 650;
-  font-size: var(--text-sm);
+  min-height: 48px;
+  padding: 0 var(--s-4);
+  border-radius: var(--md-shape-full);
+  color: var(--md-on-surface-variant);
+  font: var(--md-label-large);
   transition: background-color var(--fast) var(--ease), color var(--fast) var(--ease);
 }
 
 .view:hover {
-  background: var(--surface-sunken);
-  color: var(--ink);
+  color: var(--md-on-surface);
   text-decoration: none;
 }
 
+/* Active view is quiet taupe: cobalt is saved for "needs you" */
 .view.is-active {
-  background: var(--primary-soft);
-  color: var(--primary);
+  background: var(--md-secondary-container);
+  color: var(--md-on-secondary-container);
+  font-weight: var(--w-bold);
 }
 
 .view-label {
@@ -85,24 +102,37 @@
 }
 
 .view-count {
-  min-width: 24px;
-  padding: 0 8px;
-  border-radius: var(--r-pill);
-  background: var(--surface-sunken);
-  color: var(--ink-soft);
-  font-size: var(--text-xs);
-  font-weight: 800;
+  min-width: 20px;
+  padding: 0 6px;
+  border-radius: var(--md-shape-full);
+  color: var(--md-on-surface-variant);
+  font: var(--md-label-medium);
   text-align: center;
 }
 
 .view.is-active .view-count {
-  background: var(--surface);
-  color: var(--primary);
+  color: var(--md-on-secondary-container);
 }
 
+/* Badges: error for overdue, primary for what's waiting on you; a green check at inbox zero */
 .view-count.is-alert {
-  background: var(--danger-soft);
-  color: var(--danger);
+  background: var(--md-error);
+  color: var(--md-on-error);
+}
+
+.view-count.is-mine {
+  background: var(--md-primary);
+  color: var(--md-on-primary);
+}
+
+.view-zero {
+  display: grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--success-soft);
+  color: var(--success);
 }
 
 .account {
@@ -110,8 +140,8 @@
   display: flex;
   align-items: center;
   gap: var(--s-3);
-  padding: var(--s-3) var(--s-2) 0;
-  border-top: 1px solid var(--line);
+  padding: var(--s-3) var(--s-2) 0 var(--s-3);
+  border-top: 1px solid var(--md-outline-variant);
 }
 
 .account-who {
@@ -120,15 +150,14 @@
 }
 
 .account-name {
-  font-weight: 700;
-  font-size: var(--text-sm);
+  font: var(--md-title-small);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
 .account-role {
-  font-size: var(--text-xs);
+  font: var(--md-body-small);
   color: var(--ink-faint);
 }
 
@@ -161,7 +190,7 @@
   color: var(--ink-faint);
 }
 
-/* Toasts */
+/* Snackbars */
 .toasts {
   position: fixed;
   right: var(--s-5);
@@ -175,19 +204,28 @@
   display: flex;
   align-items: center;
   gap: var(--s-3);
-  min-width: 260px;
-  padding: var(--s-3) var(--s-3) var(--s-3) var(--s-4);
-  border-radius: var(--r-md);
-  background: var(--ink);
-  color: var(--surface);
-  box-shadow: var(--shadow-pop);
-  font-weight: 650;
-  font-size: var(--text-sm);
-  animation: toast-in var(--medium) var(--ease);
+  min-width: 280px;
+  min-height: 48px;
+  padding: var(--s-1) var(--s-2) var(--s-1) var(--s-4);
+  border-radius: var(--md-shape-xs);
+  background: var(--md-inverse-surface);
+  color: var(--md-inverse-on-surface);
+  box-shadow: var(--md-elev-3);
+  font: var(--md-body-medium);
+  animation: toast-in var(--medium) var(--ease-emphasized);
 }
 
 .toast svg:first-child {
-  color: var(--success-soft);
+  color: var(--md-inverse-primary);
+}
+
+.toast.is-celebrate {
+  background: var(--md-success);
+  color: var(--md-on-primary);
+}
+
+.toast.is-celebrate svg:first-child {
+  color: inherit;
 }
 
 .toast span {
@@ -197,18 +235,13 @@
 .toast-close {
   display: grid;
   place-items: center;
-  width: 32px;
-  height: 32px;
+  width: 40px;
+  height: 40px;
   border: 0;
-  border-radius: var(--r-sm);
+  border-radius: var(--md-shape-full);
   background: transparent;
   color: inherit;
-  opacity: 0.7;
   cursor: pointer;
-}
-
-.toast-close:hover {
-  opacity: 1;
 }
 
 @keyframes toast-in {
@@ -223,10 +256,10 @@
   width: min(480px, calc(100vw - 32px));
   padding: 0;
   border: 0;
-  border-radius: var(--r-lg);
-  background: var(--surface);
-  color: var(--ink);
-  box-shadow: var(--shadow-pop);
+  border-radius: var(--md-shape-xl);
+  background: var(--md-surface-container-high);
+  color: var(--md-on-surface);
+  box-shadow: var(--md-elev-3);
 }
 
 .dialog::backdrop {
@@ -234,7 +267,7 @@
 }
 
 .dialog[open] {
-  animation: dialog-in var(--medium) var(--ease);
+  animation: dialog-in var(--medium) var(--ease-emphasized);
 }
 
 @keyframes dialog-in {
@@ -250,8 +283,12 @@
   padding: var(--s-5);
 }
 
+.dialog-body h2 {
+  font: var(--md-headline-small);
+}
+
 .dialog-content {
-  color: var(--ink-soft);
+  color: var(--md-on-surface-variant);
 }
 
 .dialog-actions {
@@ -265,6 +302,7 @@
 @media (max-width: 900px) {
   .shell {
     grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto 1fr;
     background: var(--bg);
   }
 
@@ -317,5 +355,74 @@
 
   .content {
     padding: var(--s-5) var(--s-4) var(--s-7);
+  }
+}
+
+/* Phones: one compact row of chrome (logo, scrolling views, new, account) */
+@media (max-width: 640px) {
+  .sidebar {
+    flex-wrap: nowrap;
+    gap: var(--s-2);
+    padding: var(--s-2) var(--s-3);
+  }
+
+  .brand {
+    padding: 0;
+  }
+
+  .brand-mark {
+    width: 30px;
+    height: 30px;
+  }
+
+  .views {
+    order: 2;
+    flex: 1 1 auto;
+  }
+
+  .view {
+    padding: 0 var(--s-2);
+    gap: var(--s-1);
+  }
+
+  .view svg {
+    display: none;
+  }
+
+  .sidebar-new {
+    order: 3;
+    flex: none;
+    width: var(--control);
+    padding: 0;
+  }
+
+  .sidebar-new-label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+
+  .account {
+    order: 4;
+    margin: 0;
+  }
+
+  .account .avatar {
+    display: none;
+  }
+
+  .content {
+    padding: var(--s-4) var(--s-3) var(--s-7);
+  }
+
+  .page-head {
+    margin-bottom: var(--s-3);
+  }
+
+  .page-sub {
+    display: none;
   }
 }

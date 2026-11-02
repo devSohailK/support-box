@@ -9,7 +9,7 @@
   flex-direction: column;
   gap: var(--s-7);
   padding: var(--s-6) var(--s-7);
-  background: var(--primary-soft);
+  background: var(--bg);
 }
 
 .story {
@@ -21,7 +21,7 @@
 
 .story-line {
   font-size: var(--text-2xl);
-  font-weight: 800;
+  font-weight: var(--w-bold);
   line-height: 1.2;
   letter-spacing: -0.015em;
   color: var(--ink);
@@ -35,7 +35,7 @@
 
 .story-note {
   color: var(--ink-soft);
-  font-weight: 600;
+  font-weight: var(--w-medium);
 }
 
 /* Conversation bubbles: shared by the login story and the ticket page */
@@ -44,7 +44,7 @@
   gap: 4px;
   max-width: 400px;
   padding: var(--s-3) var(--s-4);
-  border-radius: var(--r-lg);
+  border-radius: var(--r-md);
   font-size: var(--text-sm);
   line-height: 1.5;
 }
@@ -52,15 +52,15 @@
 .bubble-who {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: var(--s-1);
   font-size: var(--text-xs);
-  font-weight: 800;
+  font-weight: var(--w-bold);
 }
 
 .bubble-customer {
   background: var(--surface);
   color: var(--ink);
-  border-bottom-left-radius: 6px;
+  border-bottom-left-radius: var(--s-1);
 }
 
 .bubble-ai {
@@ -68,18 +68,23 @@
   background: var(--ai-soft);
   color: var(--ink);
   border: 1px dashed var(--ai-line);
-  border-bottom-right-radius: 6px;
+  border-bottom-right-radius: var(--s-1);
 }
 
 .bubble-ai .bubble-who {
   color: var(--ai);
 }
 
+.bubble-sent .bubble-who {
+  color: var(--success);
+}
+
 .bubble-sent {
   margin-left: var(--s-6);
-  background: var(--primary);
-  color: var(--on-primary);
-  border-bottom-right-radius: 6px;
+  background: var(--success-soft);
+  border: 1px solid var(--success-line);
+  color: var(--ink);
+  border-bottom-right-radius: var(--s-1);
 }
 
 .login-form-wrap {
@@ -97,7 +102,7 @@
 }
 
 .login-form h1 {
-  margin-bottom: -8px;
+  margin-bottom: calc(-1 * var(--s-2));
 }
 
 .login-form .btn {

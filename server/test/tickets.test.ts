@@ -252,6 +252,7 @@ describe('mine filter and counts', () => {
     const c = createTicket(db, sample(3)); // Ben
     db.update(tickets).set({ status: 'closed' }).where(eq(tickets.id, c.id)).run();
     db.update(tickets).set({ createdAt: hoursAgo(30) }).where(eq(tickets.id, b.id)).run();
+    db.update(tickets).set({ status: 'open' }).where(eq(tickets.id, a.id)).run();
     const ben = await loginAs(app, 'agent1@test.local');
 
     const mine = (await ben.get('/api/tickets?mine=true')).body as TicketPage;
@@ -260,7 +261,17 @@ describe('mine filter and counts', () => {
     expect(mineClosed.items.map((t) => t.id)).toEqual([c.id]);
 
     const counts = (await ben.get('/api/tickets/counts')).body;
-    expect(counts).toEqual({ new: 2, open: 0, ai_error: 0, replied: 0, closed: 1, all: 3, mine: 1, overdue: 1 });
+    expect(counts).toEqual({
+      new: 1,
+      open: 1,
+      ai_error: 0,
+      replied: 0,
+      closed: 1,
+      all: 3,
+      mine: 1,
+      mineActionable: 1,
+      overdue: 1,
+    });
   });
 });
 

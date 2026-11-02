@@ -1,12 +1,12 @@
 .back {
   margin-left: calc(-1 * var(--s-3));
-  margin-bottom: var(--s-3);
+  margin-bottom: var(--s-2);
 }
 
 .detail-head {
   display: grid;
-  gap: var(--s-3);
-  margin-bottom: var(--s-5);
+  gap: var(--s-2);
+  margin-bottom: var(--s-4);
 }
 
 .detail-badges {
@@ -18,20 +18,20 @@
 
 .detail-grid {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 300px;
-  gap: var(--s-5);
+  grid-template-columns: minmax(0, 1fr) 280px;
+  gap: var(--s-4);
   align-items: start;
 }
 
 /* Conversation */
 .thread {
   display: grid;
-  gap: var(--s-4);
+  gap: var(--s-3);
 }
 
 .message {
-  padding: var(--s-5);
-  border-radius: var(--r-lg);
+  padding: var(--s-4);
+  border-radius: var(--r-md);
 }
 
 .message-customer {
@@ -39,32 +39,29 @@
   border: 1px solid var(--line);
 }
 
+/* A person sent it: done, so green and calm rather than the loudest block on the page */
 .message-sent {
-  background: var(--primary);
-  color: var(--on-primary);
+  background: var(--success-soft);
+  border: 1px solid var(--success-line);
+  color: var(--ink);
   margin-left: var(--s-7);
+}
+
+.message-sent .message-who strong {
+  color: var(--success);
 }
 
 .message-head {
   display: flex;
   align-items: center;
   gap: var(--s-3);
-  margin-bottom: var(--s-4);
-}
-
-.message-sent .avatar {
-  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.85);
+  margin-bottom: var(--s-3);
 }
 
 .message-who {
   flex: 1;
   min-width: 0;
   display: grid;
-}
-
-.message-sent .message-who .small,
-.message-sent .xs {
-  opacity: 0.85;
 }
 
 .message-body {
@@ -77,12 +74,12 @@
   display: flex;
   align-items: center;
   gap: var(--s-2);
-  margin-top: var(--s-4);
+  margin-top: var(--s-3);
   padding-top: var(--s-3);
-  border-top: 1px solid rgba(255, 255, 255, 0.25);
+  border-top: 1px solid var(--success-line);
   font-size: var(--text-xs);
-  font-weight: 650;
-  opacity: 0.9;
+  font-weight: var(--w-medium);
+  color: var(--ink-soft);
 }
 
 /* AI states */
@@ -90,9 +87,9 @@
   display: flex;
   align-items: center;
   gap: var(--s-3);
-  padding: var(--s-4) var(--s-5);
+  padding: var(--s-3) var(--s-4);
   border: 1px dashed var(--ai-line);
-  border-radius: var(--r-lg);
+  border-radius: var(--r-md);
   background: var(--ai-soft);
 }
 
@@ -102,7 +99,7 @@
 }
 
 .ai-failed-body strong {
-  color: var(--danger);
+  color: var(--warn);
 }
 
 .ai-failed-actions {
@@ -114,10 +111,10 @@
   color: var(--ink-soft);
 }
 
-/* Composer: violet while it holds the AI's suggestion */
+/* Composer: plum while it holds the AI's suggestion */
 .composer {
   border: 1px solid var(--line-strong);
-  border-radius: var(--r-lg);
+  border-radius: var(--r-md);
   background: var(--surface);
   overflow: hidden;
   transition: border-color var(--fast) var(--ease), box-shadow var(--fast) var(--ease);
@@ -141,10 +138,10 @@
   display: flex;
   align-items: center;
   gap: var(--s-2);
-  padding: var(--s-3) var(--s-5);
+  padding: var(--s-2) var(--s-4);
   border-bottom: 1px solid var(--line);
   font-size: var(--text-sm);
-  font-weight: 700;
+  font-weight: var(--w-medium);
   color: var(--ink-soft);
 }
 
@@ -155,14 +152,14 @@
 }
 
 .composer-alert {
-  margin: var(--s-3) var(--s-5) 0;
+  margin: var(--s-3) var(--s-4) 0;
 }
 
 .composer-input {
   display: block;
   width: 100%;
-  min-height: 240px;
-  padding: var(--s-4) var(--s-5);
+  min-height: 200px;
+  padding: var(--s-3) var(--s-4);
   border: 0;
   resize: vertical;
   font: inherit;
@@ -176,7 +173,7 @@
 }
 
 .composer-readonly {
-  padding: var(--s-4) var(--s-5);
+  padding: var(--s-3) var(--s-4);
   white-space: pre-wrap;
 }
 
@@ -185,12 +182,8 @@
   flex-wrap: wrap;
   align-items: center;
   gap: var(--s-2);
-  padding: var(--s-3) var(--s-4) var(--s-3) var(--s-5);
+  padding: var(--s-2) var(--s-4);
   border-top: 1px solid var(--line);
-}
-
-.composer.is-readonly .composer-foot {
-  padding: var(--s-3) var(--s-5);
 }
 
 .spacer {
@@ -200,44 +193,43 @@
 /* Side panels */
 .side {
   display: grid;
-  gap: var(--s-4);
+  gap: var(--s-3);
   position: sticky;
-  top: var(--s-5);
+  top: var(--s-4);
 }
 
 .panel {
-  padding: var(--s-5);
+  padding: var(--s-4);
   background: var(--surface);
   border: 1px solid var(--line);
-  border-radius: var(--r-md);
+  border-radius: var(--r-lg);
 }
 
 .panel-title {
   font-size: var(--text-md);
-  margin-bottom: var(--s-4);
+  margin-bottom: var(--s-3);
 }
 
 .props {
   display: grid;
-  gap: var(--s-4);
+  gap: var(--s-3);
   margin: 0;
 }
 
 .props dt {
   font-size: var(--text-xs);
-  font-weight: 700;
+  font-weight: var(--w-medium);
   color: var(--ink-faint);
-  margin-bottom: 4px;
+  margin-bottom: var(--s-1);
 }
 
 .props dd {
   margin: 0;
   font-size: var(--text-sm);
-  font-weight: 600;
+  font-weight: var(--w-medium);
 }
 
 .select-sm {
-  min-height: 40px;
   font-size: var(--text-sm);
 }
 
@@ -249,7 +241,7 @@
 
 .panel-action {
   width: 100%;
-  margin-top: var(--s-5);
+  margin-top: var(--s-4);
 }
 
 .related {
@@ -262,7 +254,7 @@
 
 .related-link {
   display: grid;
-  gap: 4px;
+  gap: var(--s-1);
   padding: var(--s-2) var(--s-3);
   margin: 0 calc(-1 * var(--s-3));
   border-radius: var(--r-sm);
@@ -276,7 +268,7 @@
 
 .related-subject {
   font-size: var(--text-sm);
-  font-weight: 650;
+  font-weight: var(--w-medium);
 }
 
 .related-meta {
@@ -285,13 +277,42 @@
   gap: var(--s-2);
 }
 
+/* Narrow: the details become a compact strip above the conversation, so triage info stays on top */
 @media (max-width: 1000px) {
   .detail-grid {
     grid-template-columns: 1fr;
   }
 
+  /* The panels join the page grid: details first, conversation, then same-sender history */
   .side {
-    position: static;
+    display: contents;
+  }
+
+  .side .panel:first-child {
+    order: -1;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--s-3);
+    padding: var(--s-3);
+  }
+
+  .side .panel:first-child .panel-title {
+    display: none;
+  }
+
+  .side .panel:first-child .props {
+    flex: 1;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  }
+
+  .side .panel-action {
+    width: auto;
+    margin-top: 0;
+  }
+
+  .side .panel + .panel {
+    order: 1;
   }
 
   .message-sent {

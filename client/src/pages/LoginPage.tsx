@@ -1,7 +1,8 @@
 import { AlertCircle, Inbox, Sparkles } from 'lucide-react';
-import { useState, type FormEvent } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState, type FormEvent } from 'react';
 import { ApiError } from '../api';
 import { useAuth } from '../auth';
+import { loginIntro, shake } from '../ui/motion';
 
 const MESSAGES: Record<string, string> = {
   invalid_credentials: 'That email and password don’t match an active account.',
@@ -15,6 +16,16 @@ export function LoginPage() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  const rootRef = useRef<HTMLDivElement>(null);
+  const formRef = useRef<HTMLFormElement>(null);
+  const [attempt, setAttempt] = useState(0);
+
+  useLayoutEffect(() => {
+    if (rootRef.current) loginIntro(rootRef.current);
+  }, []);
+  useEffect(() => {
+    if (attempt) shake(formRef.current);
+  }, [attempt]);
 
   async function onSubmit(e: FormEvent) {
     e.preventDefault();
@@ -25,13 +36,14 @@ export function LoginPage() {
     } catch (err) {
       const code = err instanceof ApiError ? err.code : '';
       setError(MESSAGES[code] ?? 'Sign-in failed. Check your connection and try again.');
+      setAttempt((n) => n + 1);
     } finally {
       setSubmitting(false);
     }
   }
 
   return (
-    <div className="login">
+    <div className="login" ref={rootRef}>
       <section className="login-story" aria-hidden="true">
         <div className="brand">
           <span className="brand-mark">
@@ -61,7 +73,7 @@ export function LoginPage() {
       </section>
 
       <section className="login-form-wrap">
-        <form className="login-form" onSubmit={onSubmit} noValidate>
+        <form className="login-form" onSubmit={onSubmit} noValidate ref={formRef}>
           <h1>Sign in</h1>
           <p className="muted">Use the account your admin set up for you.</p>
 
