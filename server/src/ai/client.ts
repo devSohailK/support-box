@@ -14,7 +14,7 @@ export type ChatFn = (req: ChatRequest) => Promise<ChatResult>;
 
 const TIMEOUT_MS = 30_000;
 
-/** Errors that are safe to show in the UI and store: no keys, no response bodies. */
+
 export class AiCallError extends Error {}
 
 type AiConfig = Pick<Config, 'AI_BASE_URL' | 'AI_API_KEY' | 'AI_MODEL' | 'AI_MAX_TOKENS'>;
